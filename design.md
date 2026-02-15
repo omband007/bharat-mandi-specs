@@ -15,6 +15,8 @@ graph TB
         ColdStorage[❄️ Cold Storage Provider]
         Supplier[🌱 Supplier]
         Bank[🏦 Financial Institution]
+        GovtAgency[🏛️ Government Agency]
+        DairyFarm[🐄 Dairy/Poultry Farm]
     end
     
     subgraph "Fasal-Parakh (Grading)"
@@ -30,55 +32,92 @@ graph TB
         UC7[View Listing Details]
         UC8[Place Purchase Order]
         UC9[Accept/Reject Order]
+        UC10[Enable Auction Mode]
+        UC11[Place Bid]
+        UC12[Win Auction]
     end
     
     subgraph "Smart Escrow"
-        UC10[Deposit Funds to Escrow]
-        UC11[Lock Payment]
-        UC12[Validate Delivery with AI]
-        UC13[Release Funds]
-        UC14[Initiate Dispute]
+        UC13[Deposit Funds to Escrow]
+        UC14[Lock Payment]
+        UC15[Validate Delivery with AI]
+        UC16[Release Funds]
+        UC17[Initiate Dispute]
     end
     
     subgraph "Photo-Log"
-        UC15[Capture Farming Activity]
-        UC16[View Activity Timeline]
-        UC17[Export for Loan Application]
-        UC18[Analyze Farming Patterns]
+        UC18[Capture Farming Activity]
+        UC19[View Activity Timeline]
+        UC20[Export for Loan Application]
+        UC21[Analyze Farming Patterns]
+    end
+    
+    subgraph "AI Advisory"
+        UC22[Diagnose Crop Disease]
+        UC23[Get Treatment Recommendations]
+        UC24[Ask Crop-AI Advisor]
+        UC25[Analyze Crop Photo/Video]
+        UC26[Get Smart Alerts]
+    end
+    
+    subgraph "Soil & Records"
+        UC27[Upload Soil Test Report]
+        UC28[View Soil Health Trends]
+        UC29[Get Fertilizer Recommendations]
+        UC30[Track Soil Parameters]
     end
     
     subgraph "Kisan-Konnect"
-        UC19[Search Service Providers]
-        UC20[Book Logistics]
-        UC21[Book Cold Storage]
-        UC22[Connect with Suppliers]
+        UC31[Search Service Providers]
+        UC32[Book Logistics]
+        UC33[Book Cold Storage]
+        UC34[Connect with Suppliers]
+        UC35[Optimize Delivery Routes]
+        UC36[Track Vehicle Live]
     end
     
     subgraph "Kisan-Mitra (Voice Assistant)"
-        UC23[Ask Voice Query]
-        UC24[Get Price Information]
-        UC25[Get Farming Advice]
-        UC26[Get Platform Help]
+        UC37[Ask Voice Query]
+        UC38[Get Price Information]
+        UC39[Get Farming Advice]
+        UC40[Get Platform Help]
     end
     
     subgraph "P2P Marketplace"
-        UC27[List Surplus Inputs]
-        UC28[Search for Inputs]
-        UC29[Exchange/Buy Inputs]
-        UC30[Rate P2P Transaction]
+        UC41[List Surplus Inputs]
+        UC42[Search for Inputs]
+        UC43[Exchange/Buy Inputs]
+        UC44[Rate P2P Transaction]
+        UC45[List Manure/Compost]
+        UC46[Test Manure Maturity]
+        UC47[Create Voice-to-Ad]
     end
     
     subgraph "Price Prophecy"
-        UC31[View Price Predictions]
-        UC32[Compare Market Prices]
-        UC33[Get Selling Alerts]
+        UC48[View Price Predictions]
+        UC49[Compare Market Prices]
+        UC50[Get Selling Alerts]
     end
     
     subgraph "Rating & Credibility"
-        UC34[View User Ratings]
-        UC35[Submit Feedback]
-        UC36[Build Credibility Score]
-        UC37[Share Score with Bank]
+        UC51[View User Ratings]
+        UC52[Submit Feedback]
+        UC53[Build Credibility Score]
+        UC54[Share Score with Bank]
+    end
+    
+    subgraph "Government & Finance"
+        UC55[Check Scheme Eligibility]
+        UC56[Apply for Schemes]
+        UC57[Apply for Bank Loan]
+        UC58[Generate Insurance Proof]
+    end
+    
+    subgraph "Traceability"
+        UC59[Create Traceability Record]
+        UC60[Link Activities to Record]
+        UC61[View Complete Timeline]
+        UC62[Generate QR Code]
     end
     
     Farmer --> UC1
@@ -87,10 +126,12 @@ graph TB
     Farmer --> UC4
     Farmer --> UC5
     Farmer --> UC9
-    Farmer --> UC15
-    Farmer --> UC16
-    Farmer --> UC17
+    Farmer --> UC10
     Farmer --> UC18
+    Farmer --> UC19
+    Farmer --> UC20
+    Farmer --> UC21
+    Farmer --> UC22
     Farmer --> UC23
     Farmer --> UC24
     Farmer --> UC25
@@ -99,37 +140,81 @@ graph TB
     Farmer --> UC28
     Farmer --> UC29
     Farmer --> UC30
-    Farmer --> UC31
-    Farmer --> UC32
-    Farmer --> UC33
-    Farmer --> UC34
-    Farmer --> UC35
-    Farmer --> UC36
     Farmer --> UC37
+    Farmer --> UC38
+    Farmer --> UC39
+    Farmer --> UC40
+    Farmer --> UC41
+    Farmer --> UC42
+    Farmer --> UC43
+    Farmer --> UC44
+    Farmer --> UC45
+    Farmer --> UC46
+    Farmer --> UC47
+    Farmer --> UC48
+    Farmer --> UC49
+    Farmer --> UC50
+    Farmer --> UC51
+    Farmer --> UC52
+    Farmer --> UC53
+    Farmer --> UC54
+    Farmer --> UC55
+    Farmer --> UC56
+    Farmer --> UC57
+    Farmer --> UC58
+    Farmer --> UC59
+    Farmer --> UC60
+    Farmer --> UC61
+    Farmer --> UC62
     
     Buyer --> UC6
     Buyer --> UC7
     Buyer --> UC8
-    Buyer --> UC10
+    Buyer --> UC11
     Buyer --> UC12
-    Buyer --> UC14
-    Buyer --> UC34
-    Buyer --> UC35
+    Buyer --> UC13
+    Buyer --> UC15
+    Buyer --> UC17
+    Buyer --> UC36
+    Buyer --> UC51
+    Buyer --> UC52
+    Buyer --> UC61
     
-    Logistics --> UC20
-    ColdStorage --> UC21
-    Supplier --> UC22
+    Logistics --> UC32
+    Logistics --> UC35
+    Logistics --> UC36
     
-    Bank --> UC37
+    ColdStorage --> UC33
+    Supplier --> UC34
+    
+    Bank --> UC54
+    Bank --> UC57
+    
+    GovtAgency --> UC55
+    GovtAgency --> UC56
+    
+    DairyFarm --> UC45
+    DairyFarm --> UC46
     
     UC2 --> UC3
     UC3 --> UC5
-    UC8 --> UC10
+    UC8 --> UC13
+    UC13 --> UC14
+    UC15 --> UC16
+    UC18 --> UC21
+    UC21 --> UC53
+    UC8 --> UC32
     UC10 --> UC11
-    UC12 --> UC13
-    UC15 --> UC18
-    UC18 --> UC36
-    UC8 --> UC20
+    UC11 --> UC12
+    UC22 --> UC23
+    UC24 --> UC25
+    UC27 --> UC28
+    UC28 --> UC29
+    UC32 --> UC35
+    UC35 --> UC36
+    UC59 --> UC60
+    UC60 --> UC61
+    UC61 --> UC62
 ```
 
 ### Key Design Principles
@@ -159,26 +244,34 @@ graph TB
 graph TB
     subgraph "Mobile App"
         UI[User Interface]
-        EdgeAI[Edge AI Engine]
+        EdgeAI[Edge AI Engine<br/>Grading, Disease, Maturity]
         LocalDB[Local SQLite]
         SyncEngine[Sync Engine]
+        GPS[GPS Tracker]
     end
     
     subgraph "Backend Services"
         API[API Gateway]
         Auth[Auth Service]
-        Marketplace[Marketplace Service]
+        Marketplace[Marketplace Service<br/>+ Auction Engine]
         Escrow[Escrow Service]
         Rating[Rating Service]
         Prediction[Price Prediction Service]
-        Voice[Voice Assistant Service]
+        Voice[Voice Assistant Service<br/>+ Crop-AI Advisor]
+        Disease[Disease Diagnosis Service]
+        Soil[Soil Health Service]
+        Alerts[Smart Alerts Service]
+        Schemes[Scheme Eligibility Service]
+        Routes[Route Optimization Service]
+        Tracking[Live Tracking Service]
+        Trace[Traceability Service]
     end
     
     subgraph "Data Layer"
-        PG[(PostgreSQL)]
-        Mongo[(MongoDB)]
-        S3[S3 Storage]
-        Cache[Redis Cache]
+        PG[(PostgreSQL<br/>Transactions, Auctions,<br/>Routes, Tracking)]
+        Mongo[(MongoDB<br/>Diagnoses, Soil Records,<br/>Alerts, Traceability)]
+        S3[S3 Storage<br/>Images, Videos,<br/>ML Models]
+        Cache[Redis Cache<br/>Sessions, Alerts]
     end
     
     subgraph "External Services"
@@ -186,18 +279,29 @@ graph TB
         SMS[SMS/OTP Service]
         WhatsApp[WhatsApp API]
         Maps[Maps API]
+        Weather[Weather API]
+        GovtDB[Government Schemes DB]
     end
     
     UI --> EdgeAI
     UI --> LocalDB
     UI --> SyncEngine
+    UI --> GPS
     SyncEngine --> API
+    
     API --> Auth
     API --> Marketplace
     API --> Escrow
     API --> Rating
     API --> Prediction
     API --> Voice
+    API --> Disease
+    API --> Soil
+    API --> Alerts
+    API --> Schemes
+    API --> Routes
+    API --> Tracking
+    API --> Trace
     
     Auth --> PG
     Marketplace --> PG
@@ -207,6 +311,18 @@ graph TB
     Rating --> PG
     Prediction --> PG
     Voice --> Cache
+    Disease --> Mongo
+    Disease --> S3
+    Soil --> Mongo
+    Alerts --> Cache
+    Alerts --> Weather
+    Schemes --> GovtDB
+    Routes --> Maps
+    Routes --> PG
+    Tracking --> PG
+    Tracking --> GPS
+    Trace --> Mongo
+    Trace --> PG
     
     Marketplace --> S3
     Voice --> WhatsApp
@@ -780,6 +896,714 @@ stateDiagram-v2
     TransactionComplete --> [*]
 ```
 
+### 9. Auction and Bidding Flow
+
+```mermaid
+sequenceDiagram
+    participant F as Farmer
+    participant App as Mobile App
+    participant BE as Backend
+    participant B1 as Buyer 1
+    participant B2 as Buyer 2
+    participant Bn as Buyer N
+
+    F->>App: Create Auction Listing
+    App->>App: Attach Quality Certificate
+    F->>App: Set Reserve Price & Duration
+    App->>BE: Publish Auction
+    BE->>BE: Validate Certificate
+    BE->>B1: Notify: New Auction
+    BE->>B2: Notify: New Auction
+    BE->>Bn: Notify: New Auction
+    
+    B1->>BE: Place Bid (₹X)
+    BE->>F: Notify: New Bid
+    BE->>B2: Notify: Bid Update
+    BE->>Bn: Notify: Bid Update
+    
+    B2->>BE: Place Higher Bid (₹X+Y)
+    BE->>F: Notify: Higher Bid
+    BE->>B1: Notify: Outbid
+    BE->>Bn: Notify: Bid Update
+    
+    loop Until Auction Ends
+        Bn->>BE: Place Bid
+        BE->>F: Notify: Bid Update
+        BE->>B1: Notify: Bid Update
+        BE->>B2: Notify: Bid Update
+    end
+    
+    BE->>BE: Auction Timer Expires
+    BE->>BE: Determine Winner
+    
+    alt Winning Bid >= Reserve Price
+        BE->>B2: You Won! Create Escrow
+        BE->>F: Auction Successful
+        BE->>B1: Auction Ended
+        BE->>Bn: Auction Ended
+        B2->>BE: Deposit Funds to Escrow
+        BE->>F: Payment Locked, Ship Produce
+    else No Bids or Below Reserve
+        BE->>F: Auction Failed
+        BE->>B1: Auction Ended (No Winner)
+        BE->>B2: Auction Ended (No Winner)
+    end
+```
+
+### 10. Disease and Pest Diagnosis Flow
+
+```mermaid
+flowchart TD
+    Start([Farmer Notices Issue]) --> OpenDiagnosis[Open Disease Diagnosis]
+    OpenDiagnosis --> CaptureImage[Capture Affected Plant Photo]
+    CaptureImage --> OptionalVideo{Add Video?}
+    
+    OptionalVideo -->|Yes| RecordVideo[Record Short Video]
+    OptionalVideo -->|No| ProcessImage
+    RecordVideo --> ProcessImage[Process Image/Video]
+    
+    ProcessImage --> EdgeAI[Run Edge AI Model]
+    EdgeAI --> DetectDisease[Detect Disease/Pest]
+    
+    DetectDisease --> HighConfidence{Confidence > 85%?}
+    
+    HighConfidence -->|Yes| ShowDiagnosis[Show Diagnosis Result]
+    HighConfidence -->|No| ShowTopThree[Show Top 3 Possibilities]
+    
+    ShowDiagnosis --> DiseaseInfo[Display Disease Info]
+    ShowTopThree --> FarmerSelect[Farmer Selects Match]
+    FarmerSelect --> DiseaseInfo
+    
+    DiseaseInfo --> ShowSymptoms[Show Symptoms & Causes]
+    ShowSymptoms --> ShowRemedies[Show Treatment Options]
+    
+    ShowRemedies --> RemedyType{Treatment Type}
+    
+    RemedyType -->|Chemical| ChemicalList[List Pesticides/Fungicides]
+    RemedyType -->|Organic| OrganicList[List Natural Remedies]
+    RemedyType -->|Both| ShowBoth[Show Both Options]
+    
+    ChemicalList --> DosageInfo[Show Dosage & Safety]
+    OrganicList --> PreparationInfo[Show Preparation Steps]
+    ShowBoth --> DosageInfo
+    ShowBoth --> PreparationInfo
+    
+    DosageInfo --> SaveRecord[Save to Photo Log]
+    PreparationInfo --> SaveRecord
+    
+    SaveRecord --> BuyProducts{Buy Products?}
+    
+    BuyProducts -->|Yes| RedirectMarket[Redirect to Marketplace]
+    BuyProducts -->|No| SetReminder[Set Treatment Reminder]
+    
+    RedirectMarket --> End([End])
+    SetReminder --> End
+```
+
+### 11. Crop-AI Advisor Flow
+
+```mermaid
+flowchart TD
+    Start([Farmer Opens Advisor]) --> InputMethod{Input Method}
+    
+    InputMethod -->|Voice| RecordVoice[Record Voice Question]
+    InputMethod -->|Text| TypeQuestion[Type Question]
+    InputMethod -->|Photo| CapturePhoto[Capture Photo]
+    InputMethod -->|Video| RecordVideo[Record Video]
+    
+    RecordVoice --> STT[Speech-to-Text]
+    STT --> ProcessQuery
+    TypeQuestion --> ProcessQuery[Process Query]
+    
+    CapturePhoto --> AnalyzeVisual[Analyze Visual Content]
+    RecordVideo --> AnalyzeVisual
+    AnalyzeVisual --> GuessIntent[AI Guesses Intent]
+    GuessIntent --> ProcessQuery
+    
+    ProcessQuery --> NLU[Natural Language Understanding]
+    NLU --> ExtractIntent[Extract Intent & Entities]
+    
+    ExtractIntent --> QueryType{Query Type}
+    
+    QueryType -->|Crop Selection| CropAdvice[Recommend Crops for Season/Soil]
+    QueryType -->|Planting| PlantingAdvice[Sowing Time, Spacing, Depth]
+    QueryType -->|Irrigation| IrrigationAdvice[Water Schedule & Quantity]
+    QueryType -->|Fertilizer| FertilizerAdvice[NPK Ratios & Timing]
+    QueryType -->|Pest/Disease| DiseaseDiagnosis[Link to Diagnosis Module]
+    QueryType -->|Harvest| HarvestAdvice[Harvest Timing & Methods]
+    QueryType -->|Market| MarketAdvice[Price Trends & Demand]
+    QueryType -->|General| GeneralAdvice[Search Knowledge Base]
+    
+    CropAdvice --> GenerateResponse[Generate Response]
+    PlantingAdvice --> GenerateResponse
+    IrrigationAdvice --> GenerateResponse
+    FertilizerAdvice --> GenerateResponse
+    DiseaseDiagnosis --> GenerateResponse
+    HarvestAdvice --> GenerateResponse
+    MarketAdvice --> GenerateResponse
+    GeneralAdvice --> GenerateResponse
+    
+    GenerateResponse --> TTS[Text-to-Speech]
+    TTS --> PlayAudio[Play Audio Response]
+    PlayAudio --> ShowText[Show Text Response]
+    
+    ShowText --> FollowUp{Follow-up Question?}
+    
+    FollowUp -->|Yes| InputMethod
+    FollowUp -->|No| SaveHistory[Save to Chat History]
+    
+    SaveHistory --> ActionableItem{Actionable Item?}
+    
+    ActionableItem -->|Yes| CreateReminder[Create Reminder/Task]
+    ActionableItem -->|No| End([End])
+    
+    CreateReminder --> End
+```
+
+### 12. Soil Health Recording Flow
+
+```mermaid
+flowchart TD
+    Start([Farmer Gets Soil Test]) --> OpenModule[Open Soil Health Module]
+    OpenModule --> InputMethod{Input Method}
+    
+    InputMethod -->|Scan Report| CaptureReport[Capture Test Report Photo]
+    InputMethod -->|Manual Entry| ManualForm[Open Manual Entry Form]
+    
+    CaptureReport --> OCR[OCR Extract Data]
+    OCR --> ValidateData{Data Valid?}
+    
+    ValidateData -->|No| ManualCorrection[Manual Correction]
+    ValidateData -->|Yes| ParseData[Parse Test Parameters]
+    
+    ManualCorrection --> ParseData
+    ManualForm --> ParseData
+    
+    ParseData --> ExtractParams[Extract: pH, N, P, K, OC, EC, etc.]
+    ExtractParams --> SaveRecord[Save Record with Date & Location]
+    
+    SaveRecord --> HistoryCheck{Previous Records Exist?}
+    
+    HistoryCheck -->|Yes| CompareHistory[Compare with Historical Data]
+    HistoryCheck -->|No| FirstRecord[Mark as Baseline]
+    
+    CompareHistory --> TrendAnalysis[Analyze Trends]
+    TrendAnalysis --> ShowTrends[Visualize Trends (Charts)]
+    
+    FirstRecord --> ShowCurrent[Show Current Values]
+    ShowTrends --> ShowCurrent
+    
+    ShowCurrent --> ParameterStatus{Parameter Status}
+    
+    ParameterStatus -->|Deficient| ShowDeficiency[Highlight Deficiencies]
+    ParameterStatus -->|Optimal| ShowOptimal[Mark as Healthy]
+    ParameterStatus -->|Excess| ShowExcess[Warn About Excess]
+    
+    ShowDeficiency --> Recommendations[Generate Recommendations]
+    ShowOptimal --> Recommendations
+    ShowExcess --> Recommendations
+    
+    Recommendations --> SuggestAmendments[Suggest Soil Amendments]
+    SuggestAmendments --> SuggestCrops[Suggest Suitable Crops]
+    
+    SuggestCrops --> SetReminder{Set Next Test Reminder?}
+    
+    SetReminder -->|Yes| CreateReminder[Create Reminder (6 months)]
+    SetReminder -->|No| End([End])
+    
+    CreateReminder --> End
+```
+
+### 13. Smart Alerts and Predictive Advisory Flow
+
+```mermaid
+flowchart TD
+    Start([Background Service Running]) --> MonitorData[Monitor Multiple Data Sources]
+    
+    MonitorData --> WeatherAPI[Weather API]
+    MonitorData --> MarketAPI[Market Price API]
+    MonitorData --> FarmData[Farm Activity Data]
+    MonitorData --> CropStage[Crop Growth Stage]
+    MonitorData --> LocalEvents[Local Events/News]
+    
+    WeatherAPI --> AnalyzeWeather[Analyze Weather Patterns]
+    MarketAPI --> AnalyzePrices[Analyze Price Trends]
+    FarmData --> AnalyzeSchedule[Analyze Farm Schedule]
+    CropStage --> AnalyzeGrowth[Analyze Growth Stage]
+    LocalEvents --> AnalyzeEvents[Analyze Local Context]
+    
+    AnalyzeWeather --> ContextEngine[Contextual Alert Engine]
+    AnalyzePrices --> ContextEngine
+    AnalyzeSchedule --> ContextEngine
+    AnalyzeGrowth --> ContextEngine
+    AnalyzeEvents --> ContextEngine
+    
+    ContextEngine --> AlertType{Alert Type}
+    
+    AlertType -->|Weather| WeatherAlert[Heavy Rain/Drought Warning]
+    AlertType -->|Irrigation| IrrigationAlert[Irrigation Timing Alert]
+    AlertType -->|Pest| PestAlert[Pest Outbreak Warning]
+    AlertType -->|Market| MarketAlert[Price Spike/Drop Alert]
+    AlertType -->|Activity| ActivityAlert[Scheduled Activity Reminder]
+    AlertType -->|Power| PowerAlert[Power Cut Schedule]
+    AlertType -->|Disease| DiseaseAlert[Disease Outbreak in Area]
+    
+    WeatherAlert --> GenerateAction[Generate Actionable Suggestion]
+    IrrigationAlert --> GenerateAction
+    PestAlert --> GenerateAction
+    MarketAlert --> GenerateAction
+    ActivityAlert --> GenerateAction
+    PowerAlert --> GenerateAction
+    DiseaseAlert --> GenerateAction
+    
+    GenerateAction --> PriorityCheck{Priority Level}
+    
+    PriorityCheck -->|Critical| VoiceCall[Automated Voice Call]
+    PriorityCheck -->|High| PushNotification[Push Notification]
+    PriorityCheck -->|Medium| InAppAlert[In-App Alert]
+    PriorityCheck -->|Low| SilentNotification[Silent Notification]
+    
+    VoiceCall --> DeliverAlert[Deliver Alert to Farmer]
+    PushNotification --> DeliverAlert
+    InAppAlert --> DeliverAlert
+    SilentNotification --> DeliverAlert
+    
+    DeliverAlert --> FarmerResponse{Farmer Acknowledges?}
+    
+    FarmerResponse -->|Yes| LogResponse[Log Response]
+    FarmerResponse -->|No| RetryLogic[Retry After Delay]
+    
+    RetryLogic --> RetryCount{Retry < 3?}
+    RetryCount -->|Yes| DeliverAlert
+    RetryCount -->|No| LogFailure[Log Delivery Failure]
+    
+    LogResponse --> ActionTaken{Action Taken?}
+    LogFailure --> End([End])
+    
+    ActionTaken -->|Yes| UpdateSchedule[Update Farm Schedule]
+    ActionTaken -->|No| End
+    
+    UpdateSchedule --> End
+```
+
+### 14. Manure and Compost Marketplace Flow
+
+```mermaid
+sequenceDiagram
+    participant DF as Dairy/Poultry Farm
+    participant App as Mobile App
+    participant BE as Backend
+    participant CF as Crop Farmer
+    participant LO as Logistics
+
+    DF->>App: Create Manure Listing
+    DF->>App: Enter Details (Type, Quantity, Maturity)
+    DF->>App: Capture Photo/Video
+    App->>BE: Submit Listing
+    BE->>BE: Validate Listing
+    BE->>CF: Notify Nearby Farmers
+    
+    CF->>App: Browse Manure Listings
+    App->>BE: Get Listings (Location-based)
+    BE->>App: Return Listings
+    CF->>App: View Listing Details
+    
+    CF->>App: Request Maturity Test
+    App->>BE: Request Test
+    BE->>DF: Notify: Test Requested
+    DF->>App: Capture Fresh Photo/Video
+    App->>BE: Submit for AI Analysis
+    BE->>BE: Run Maturity Test AI
+    BE->>BE: Generate Test Report
+    BE->>CF: Send Test Report
+    BE->>DF: Send Test Report
+    
+    alt Manure is Mature
+        CF->>App: Place Order
+        App->>BE: Create Order
+        BE->>DF: Notify: New Order
+        DF->>App: Accept Order
+        App->>BE: Order Accepted
+        BE->>CF: Notify: Order Accepted
+        
+        CF->>App: Arrange Pickup
+        App->>BE: Request Logistics
+        BE->>LO: Assign Pickup
+        LO->>DF: Pickup Scheduled
+        LO->>CF: Delivery Scheduled
+        
+        LO->>BE: Pickup Complete
+        BE->>DF: Payment Released
+        BE->>CF: Delivery Confirmed
+        
+        CF->>App: Rate Transaction
+        DF->>App: Rate Transaction
+    else Manure Not Mature
+        CF->>App: Decline Order
+        BE->>DF: Notify: Needs More Time
+    end
+```
+
+### 15. Manure Maturity Test Flow
+
+```mermaid
+flowchart TD
+    Start([Farmer Requests Test]) --> CaptureMedia[Capture Photo/Video of Manure]
+    CaptureMedia --> UploadMedia[Upload to Backend]
+    
+    UploadMedia --> EdgeAI{Edge AI Available?}
+    
+    EdgeAI -->|Yes| LocalAnalysis[Run Local AI Model]
+    EdgeAI -->|No| CloudAnalysis[Send to Cloud AI]
+    
+    LocalAnalysis --> AnalyzeVisual[Analyze Visual Features]
+    CloudAnalysis --> AnalyzeVisual
+    
+    AnalyzeVisual --> CheckColor[Check Color (Dark Brown/Black)]
+    AnalyzeVisual --> CheckTexture[Check Texture (Crumbly)]
+    AnalyzeVisual --> CheckMoisture[Check Moisture Level]
+    AnalyzeVisual --> CheckOdor[Estimate Odor (from visual cues)]
+    
+    CheckColor --> ScoreColor[Color Score: 0-100]
+    CheckTexture --> ScoreTexture[Texture Score: 0-100]
+    CheckMoisture --> ScoreMoisture[Moisture Score: 0-100]
+    CheckOdor --> ScoreOdor[Odor Score: 0-100]
+    
+    ScoreColor --> CalculateOverall[Calculate Overall Maturity Score]
+    ScoreTexture --> CalculateOverall
+    ScoreMoisture --> CalculateOverall
+    ScoreOdor --> CalculateOverall
+    
+    CalculateOverall --> MaturityLevel{Maturity Score}
+    
+    MaturityLevel -->|>85| FullyMature[Fully Mature ✓]
+    MaturityLevel -->|60-85| PartiallyMature[Partially Mature ⚠]
+    MaturityLevel -->|<60| NotMature[Not Mature ✗]
+    
+    FullyMature --> SafeToUse[Safe to Use Immediately]
+    PartiallyMature --> WaitTime[Wait 2-4 Weeks]
+    NotMature --> WaitLonger[Wait 4-8 Weeks]
+    
+    SafeToUse --> GenerateReport[Generate Test Report]
+    WaitTime --> GenerateReport
+    WaitLonger --> GenerateReport
+    
+    GenerateReport --> ShowResults[Show Results to Farmer]
+    ShowResults --> Recommendations[Show Usage Recommendations]
+    
+    Recommendations --> SaveReport[Save Report to History]
+    SaveReport --> ShareOption{Share Report?}
+    
+    ShareOption -->|Yes| ShareBuyer[Share with Potential Buyers]
+    ShareOption -->|No| End([End])
+    
+    ShareBuyer --> End
+```
+
+### 16. Voice-to-Ad Generation Flow
+
+```mermaid
+flowchart TD
+    Start([Farmer Wants to Create Ad]) --> OpenAdCreator[Open Ad Creator]
+    OpenAdCreator --> RecordVoice[Record Voice Note]
+    
+    RecordVoice --> VoiceContent[Farmer Describes: Item, Quantity, Price, Location]
+    VoiceContent --> STT[Speech-to-Text Conversion]
+    
+    STT --> NLU[Natural Language Understanding]
+    NLU --> ExtractEntities[Extract Entities]
+    
+    ExtractEntities --> ItemType[Item Type: Seeds/Saplings/Tools]
+    ExtractEntities --> Quantity[Quantity: Number & Unit]
+    ExtractEntities --> Price[Price: Amount]
+    ExtractEntities --> Location[Location: Village/District]
+    ExtractEntities --> Condition[Condition: New/Used]
+    ExtractEntities --> Description[Additional Details]
+    
+    ItemType --> ValidateData{All Required Data?}
+    Quantity --> ValidateData
+    Price --> ValidateData
+    Location --> ValidateData
+    
+    ValidateData -->|No| AskMissing[Ask for Missing Info]
+    AskMissing --> FarmerProvides[Farmer Provides Info]
+    FarmerProvides --> ValidateData
+    
+    ValidateData -->|Yes| CapturePhoto[Capture Photo of Item]
+    CapturePhoto --> AnalyzePhoto[AI Analyzes Photo]
+    
+    AnalyzePhoto --> EnhanceDescription[Enhance Description with Visual Details]
+    EnhanceDescription --> GenerateTitle[Generate Catchy Title]
+    
+    GenerateTitle --> CreateDraft[Create Ad Draft]
+    CreateDraft --> ShowPreview[Show Preview to Farmer]
+    
+    ShowPreview --> FarmerReview{Farmer Approves?}
+    
+    FarmerReview -->|No| EditAd[Farmer Edits Ad]
+    EditAd --> ShowPreview
+    
+    FarmerReview -->|Yes| SelectCategory[Select Category]
+    SelectCategory --> SetVisibility[Set Visibility (Public/Local)]
+    
+    SetVisibility --> PublishAd[Publish Ad]
+    PublishAd --> NotifyNearby[Notify Nearby Farmers]
+    
+    NotifyNearby --> AdLive[Ad is Live]
+    AdLive --> End([End])
+```
+
+### 17. Government Scheme Eligibility Flow
+
+```mermaid
+flowchart TD
+    Start([Farmer Opens Schemes]) --> LoadProfile[Load Farmer Profile]
+    LoadProfile --> FetchSchemes[Fetch Active Government Schemes]
+    
+    FetchSchemes --> SchemeDB[Government Schemes Database]
+    SchemeDB --> FilterByState[Filter by State]
+    FilterByState --> FilterByDistrict[Filter by District]
+    
+    FilterByDistrict --> MatchEngine[AI Matching Engine]
+    
+    MatchEngine --> CheckLandSize[Check Land Size]
+    MatchEngine --> CheckCropType[Check Crop Type]
+    MatchEngine --> CheckIncome[Check Income Level]
+    MatchEngine --> CheckAge[Check Farmer Age]
+    MatchEngine --> CheckGender[Check Gender (Women schemes)]
+    MatchEngine --> CheckCaste[Check Category (SC/ST/OBC)]
+    MatchEngine --> CheckBankAccount[Check Bank Account]
+    MatchEngine --> CheckPrevSchemes[Check Previous Schemes]
+    
+    CheckLandSize --> CalculateMatch[Calculate Match Score]
+    CheckCropType --> CalculateMatch
+    CheckIncome --> CalculateMatch
+    CheckAge --> CalculateMatch
+    CheckGender --> CalculateMatch
+    CheckCaste --> CalculateMatch
+    CheckBankAccount --> CalculateMatch
+    CheckPrevSchemes --> CalculateMatch
+    
+    CalculateMatch --> RankSchemes[Rank Schemes by Eligibility]
+    RankSchemes --> DisplayResults[Display Results]
+    
+    DisplayResults --> SchemeCategories{Scheme Category}
+    
+    SchemeCategories -->|Subsidy| SubsidySchemes[Fertilizer/Seed Subsidy]
+    SchemeCategories -->|Insurance| InsuranceSchemes[Crop Insurance]
+    SchemeCategories -->|Loan| LoanSchemes[Kisan Credit Card]
+    SchemeCategories -->|Equipment| EquipmentSchemes[Machinery Subsidy]
+    SchemeCategories -->|Training| TrainingSchemes[Skill Development]
+    
+    SubsidySchemes --> ShowDetails[Show Scheme Details]
+    InsuranceSchemes --> ShowDetails
+    LoanSchemes --> ShowDetails
+    EquipmentSchemes --> ShowDetails
+    TrainingSchemes --> ShowDetails
+    
+    ShowDetails --> EligibilityStatus{Eligibility Status}
+    
+    EligibilityStatus -->|Eligible| ShowApply[Show Apply Button]
+    EligibilityStatus -->|Partially| ShowMissing[Show Missing Requirements]
+    EligibilityStatus -->|Not Eligible| ShowReason[Show Reason]
+    
+    ShowApply --> ApplyNow{Apply Now?}
+    ShowMissing --> CompleteProfile[Complete Profile]
+    ShowReason --> ExploreOthers[Explore Other Schemes]
+    
+    CompleteProfile --> ShowApply
+    ExploreOthers --> DisplayResults
+    
+    ApplyNow -->|Yes| CollectDocs[Collect Required Documents]
+    ApplyNow -->|No| SaveForLater[Save for Later]
+    
+    CollectDocs --> UploadDocs[Upload Documents]
+    UploadDocs --> SubmitApplication[Submit Application]
+    
+    SubmitApplication --> TrackApplication[Track Application Status]
+    SaveForLater --> End([End])
+    TrackApplication --> End
+```
+
+### 18. Logistics Route Optimization Flow
+
+```mermaid
+flowchart TD
+    Start([Multiple Pickup Requests]) --> CollectRequests[Collect Pickup Requests]
+    CollectRequests --> ExtractLocations[Extract Pickup Locations]
+    
+    ExtractLocations --> CheckProximity{Locations Within 50km?}
+    
+    CheckProximity -->|No| IndividualRoutes[Create Individual Routes]
+    CheckProximity -->|Yes| PoolingOpportunity[Pooling Opportunity Detected]
+    
+    PoolingOpportunity --> NotifyFarmers[Notify Farmers: Pooling Available]
+    NotifyFarmers --> FarmersAgree{All Farmers Agree?}
+    
+    FarmersAgree -->|No| IndividualRoutes
+    FarmersAgree -->|Yes| OptimizeRoute[Run Route Optimization]
+    
+    OptimizeRoute --> TSPAlgorithm[Traveling Salesman Algorithm]
+    TSPAlgorithm --> ConsiderFactors[Consider Factors]
+    
+    ConsiderFactors --> RoadConditions[Road Conditions]
+    ConsiderFactors --> TrafficData[Traffic Data]
+    ConsiderFactors --> ProduceType[Produce Type (Perishability)]
+    ConsiderFactors --> TruckCapacity[Truck Capacity]
+    ConsiderFactors --> TimeWindows[Pickup Time Windows]
+    
+    RoadConditions --> GenerateRoute[Generate Optimal Route]
+    TrafficData --> GenerateRoute
+    ProduceType --> GenerateRoute
+    TruckCapacity --> GenerateRoute
+    TimeWindows --> GenerateRoute
+    
+    GenerateRoute --> CalculateSavings[Calculate Cost Savings]
+    CalculateSavings --> SplitCosts[Split Costs Among Farmers]
+    
+    SplitCosts --> ShowRoute[Show Route to All Parties]
+    IndividualRoutes --> ShowRoute
+    
+    ShowRoute --> AssignVehicle[Assign Vehicle]
+    AssignVehicle --> NotifyDriver[Notify Driver]
+    
+    NotifyDriver --> ShareETA[Share ETA with Farmers]
+    ShareETA --> StartPickup[Start Pickup Route]
+    
+    StartPickup --> PickupLoop{More Pickups?}
+    
+    PickupLoop -->|Yes| NextLocation[Navigate to Next Location]
+    NextLocation --> ArriveLocation[Arrive at Location]
+    ArriveLocation --> LoadProduce[Load Produce]
+    LoadProduce --> UpdateStatus[Update Status]
+    UpdateStatus --> PickupLoop
+    
+    PickupLoop -->|No| AllLoaded[All Produce Loaded]
+    AllLoaded --> OptimizeDelivery[Optimize Delivery Route]
+    
+    OptimizeDelivery --> DeliverProduce[Deliver to Buyers]
+    DeliverProduce --> End([End])
+```
+
+### 19. Live Vehicle Tracking Flow
+
+```mermaid
+sequenceDiagram
+    participant F as Farmer
+    participant App as Mobile App
+    participant BE as Backend
+    participant GPS as GPS Tracker
+    participant D as Driver
+    participant B as Buyer
+
+    F->>App: View Order Status
+    App->>BE: Get Order Details
+    BE->>App: Order in Transit
+    App->>F: Show "Track Vehicle" Button
+    
+    F->>App: Click Track Vehicle
+    App->>BE: Request Live Location
+    BE->>GPS: Get Current Location
+    GPS->>BE: GPS Coordinates
+    BE->>App: Location Data
+    App->>F: Show on Map
+    
+    loop Every 30 seconds
+        GPS->>BE: Update Location
+        BE->>App: Push Location Update
+        App->>F: Update Map
+    end
+    
+    BE->>BE: Calculate ETA
+    BE->>App: Send ETA
+    App->>F: Show ETA
+    
+    alt Delay Detected
+        BE->>BE: Detect Route Deviation/Delay
+        BE->>F: Send Delay Alert
+        BE->>B: Send Delay Alert
+        BE->>D: Request Status Update
+        D->>BE: Provide Reason
+        BE->>F: Share Reason
+        BE->>B: Share Reason
+    end
+    
+    GPS->>BE: Approaching Destination
+    BE->>B: Notify: Vehicle Arriving Soon
+    BE->>F: Notify: Delivery Imminent
+    
+    D->>BE: Delivery Complete
+    BE->>B: Request Delivery Confirmation
+    B->>BE: Confirm Delivery
+    BE->>F: Notify: Delivery Confirmed
+```
+
+### 20. End-to-End Traceability Flow
+
+```mermaid
+flowchart TD
+    Start([Seed Purchase]) --> RecordSeed[Record Seed Details]
+    RecordSeed --> SeedBatch[Batch Number, Supplier, Date]
+    SeedBatch --> CreateTraceID[Create Traceability ID]
+    
+    CreateTraceID --> Sowing[Sowing Activity]
+    Sowing --> PhotoLog1[Photo Log: Sowing]
+    PhotoLog1 --> RecordDate1[Record Date & Location]
+    
+    RecordDate1 --> GrowthStage[Growth Monitoring]
+    GrowthStage --> PhotoLog2[Photo Log: Growth Stages]
+    PhotoLog2 --> RecordActivities[Record Activities]
+    
+    RecordActivities --> Irrigation[Irrigation Events]
+    RecordActivities --> Fertilization[Fertilization Events]
+    RecordActivities --> PestControl[Pest Control Events]
+    RecordActivities --> Weeding[Weeding Events]
+    
+    Irrigation --> LogInputs[Log Inputs Used]
+    Fertilization --> LogInputs
+    PestControl --> LogInputs
+    Weeding --> LogInputs
+    
+    LogInputs --> InputDetails[Product Name, Quantity, Date]
+    InputDetails --> Harvest[Harvest Activity]
+    
+    Harvest --> PhotoLog3[Photo Log: Harvest]
+    PhotoLog3 --> RecordYield[Record Yield]
+    RecordYield --> QualityGrading[Fasal-Parakh Grading]
+    
+    QualityGrading --> Certificate[Quality Certificate]
+    Certificate --> LinkTrace[Link to Trace ID]
+    
+    LinkTrace --> Packaging[Packaging]
+    Packaging --> PackageID[Generate Package ID]
+    PackageID --> LinkPackage[Link Package to Trace ID]
+    
+    LinkPackage --> Dispatch[Dispatch to Buyer]
+    Dispatch --> LogisticInfo[Logistics Information]
+    LogisticInfo --> VehicleID[Vehicle ID, Driver, Route]
+    
+    VehicleID --> Transit[In Transit]
+    Transit --> LiveTracking[Live GPS Tracking]
+    LiveTracking --> Delivery[Delivery]
+    
+    Delivery --> BuyerVerification[Buyer Verification]
+    BuyerVerification --> DeliveryPhoto[Delivery Photo]
+    DeliveryPhoto --> QualityCheck[Quality Check]
+    
+    QualityCheck --> FinalRecord[Final Record]
+    FinalRecord --> CompleteTrace[Complete Traceability Chain]
+    
+    CompleteTrace --> GenerateQR[Generate QR Code]
+    GenerateQR --> QRContains[QR Contains Full Journey]
+    
+    QRContains --> SeedToShelf[Seed → Sowing → Growth → Harvest → Grade → Delivery]
+    SeedToShelf --> ConsumerScan[Consumer Can Scan QR]
+    
+    ConsumerScan --> ViewJourney[View Complete Journey]
+    ViewJourney --> VerifyAuthenticity[Verify Authenticity]
+    VerifyAuthenticity --> End([End])
+```
+
 ## UI Wireframes and Screen Mockups
 
 ### Design Principles for UI
@@ -1317,6 +2141,392 @@ graph TD
         📞 Contact Support<br/>
         ℹ️ About<br/><br/>
         [Logout]
+        </div>"]
+    end
+```
+
+### 12. Auction Screen
+
+```mermaid
+graph TD
+    subgraph "Auction Listing"
+        U["<div style='text-align:left'>
+        ← Back | <b>Live Auction</b><br/><br/>
+        🏆 <b>Tomato - Grade A</b><br/>
+        📦 Quantity: 50 Quintal<br/>
+        📍 Nashik, Maharashtra<br/><br/>
+        ⏱️ <b>Time Remaining</b><br/>
+        <span style='color:red; font-size:24px'>02:45:30</span><br/><br/>
+        💰 <b>Current Bid</b><br/>
+        <span style='font-size:28px'>₹32,500</span><br/>
+        <span style='color:gray'>Reserve: ₹30,000</span><br/><br/>
+        📊 <b>Bid History</b><br/>
+        Buyer_789: ₹32,500 • 2 min ago<br/>
+        Buyer_456: ₹31,000 • 5 min ago<br/>
+        Buyer_123: ₹30,500 • 8 min ago<br/><br/>
+        💵 <b>Your Bid</b><br/>
+        [₹ _______]<br/><br/>
+        [Place Bid] [Auto-Bid]<br/><br/>
+        📜 [View Certificate] [Contact Farmer]
+        </div>"]
+    end
+```
+
+### 13. Disease Diagnosis Screen
+
+```mermaid
+graph TD
+    subgraph "Disease Diagnosis"
+        V["<div style='text-align:left'>
+        ← Back | <b>Disease Diagnosis</b><br/><br/>
+        📸 <b>Capture Affected Plant</b><br/>
+        [Camera Preview Area]<br/><br/>
+        [📷 Capture Photo] [🎥 Record Video]<br/><br/>
+        <b>Diagnosis Result</b><br/>
+        🦠 <b>Tomato Late Blight</b><br/>
+        Confidence: 92%<br/><br/>
+        <b>Symptoms</b><br/>
+        • Dark brown spots on leaves<br/>
+        • White fungal growth<br/>
+        • Rapid spread in humid conditions<br/><br/>
+        <b>Treatment Options</b><br/>
+        [Chemical] [Organic] [Both]<br/><br/>
+        💊 <b>Chemical Treatment</b><br/>
+        • Mancozeb 75% WP<br/>
+        • Dosage: 2g/liter water<br/>
+        • Spray every 7 days<br/><br/>
+        🌿 <b>Organic Treatment</b><br/>
+        • Neem oil spray<br/>
+        • Copper fungicide<br/>
+        • Remove affected leaves<br/><br/>
+        [Buy Products] [Save to Log] [Set Reminder]
+        </div>"]
+    end
+```
+
+### 14. Crop-AI Advisor Screen
+
+```mermaid
+graph TD
+    subgraph "Crop-AI Advisor"
+        W["<div style='text-align:left'>
+        ← Back | <b>Crop-AI Advisor</b><br/><br/>
+        🤖 <b>Ask Me Anything</b><br/><br/>
+        <b>Chat History</b><br/><br/>
+        👨‍🌾 When should I harvest tomatoes?<br/><br/>
+        🤖 Harvest when fruits are firm and<br/>
+        fully colored. For Nashik region,<br/>
+        typically 60-80 days after planting.<br/>
+        Check for these signs:<br/>
+        • Deep red color<br/>
+        • Firm texture<br/>
+        • Easy to pluck<br/><br/>
+        👨‍🌾 [Photo of plant]<br/>
+        What fertilizer should I use?<br/><br/>
+        🤖 Based on your tomato crop at<br/>
+        flowering stage, I recommend:<br/>
+        • NPK 19:19:19 @ 5kg/acre<br/>
+        • Apply every 15 days<br/>
+        • Mix with water for drip irrigation<br/><br/>
+        <b>Type or speak your question</b><br/>
+        [____________] 🎤<br/><br/>
+        [📷 Photo] [🎥 Video] [Send]
+        </div>"]
+    end
+```
+
+### 15. Soil Health Screen
+
+```mermaid
+graph TD
+    subgraph "Soil Health Records"
+        X["<div style='text-align:left'>
+        ← Back | <b>Soil Health</b><br/><br/>
+        📊 <b>Latest Test Results</b><br/>
+        Date: 15 Jan 2026<br/><br/>
+        <b>Key Parameters</b><br/>
+        pH: 6.8 ✓ Optimal<br/>
+        Nitrogen (N): 245 kg/ha ⚠ Low<br/>
+        Phosphorus (P): 18 kg/ha ✓ Good<br/>
+        Potassium (K): 210 kg/ha ⚠ Low<br/>
+        Organic Carbon: 0.52% ✓ Good<br/>
+        EC: 0.35 dS/m ✓ Normal<br/><br/>
+        📈 <b>Trends (Last 2 Years)</b><br/>
+        [Line Chart: pH, N, P, K over time]<br/><br/>
+        💡 <b>Recommendations</b><br/>
+        • Apply Urea 50 kg/acre for N<br/>
+        • Add Muriate of Potash 25 kg/acre<br/>
+        • Suitable crops: Tomato, Chili, Cotton<br/><br/>
+        [Add New Test] [View History]<br/>
+        [Set Reminder: Next Test in 6 months]
+        </div>"]
+    end
+```
+
+### 16. Smart Alerts Screen
+
+```mermaid
+graph TD
+    subgraph "Smart Alerts"
+        Y["<div style='text-align:left'>
+        ← Back | <b>Smart Alerts</b><br/><br/>
+        🔴 <b>Critical Alerts</b><br/><br/>
+        ⚡ <b>Power Cut Alert</b><br/>
+        Scheduled power cut tomorrow 2-6 PM<br/>
+        💡 Action: Irrigate today evening<br/>
+        [Dismiss] [Snooze] • 10 min ago<br/><br/>
+        🌧️ <b>Heavy Rain Warning</b><br/>
+        Heavy rainfall expected in 24 hours<br/>
+        💡 Action: Cover harvested produce<br/>
+        [Dismiss] [Snooze] • 1 hour ago<br/><br/>
+        🟡 <b>High Priority</b><br/><br/>
+        💰 <b>Price Spike Alert</b><br/>
+        Tomato prices up 15% in Nashik<br/>
+        💡 Action: Consider selling now<br/>
+        [View Prices] • 2 hours ago<br/><br/>
+        🦠 <b>Pest Outbreak Warning</b><br/>
+        Whitefly outbreak in nearby farms<br/>
+        💡 Action: Apply preventive spray<br/>
+        [View Details] • 3 hours ago<br/><br/>
+        🟢 <b>Normal Alerts</b><br/><br/>
+        📅 <b>Activity Reminder</b><br/>
+        Scheduled: Fertilizer application<br/>
+        [Mark Done] • Today<br/><br/>
+        [Clear All]
+        </div>"]
+    end
+```
+
+### 17. Manure Marketplace Screen
+
+```mermaid
+graph TD
+    subgraph "Manure Marketplace"
+        Z["<div style='text-align:left'>
+        ← Back | <b>Manure Market</b><br/><br/>
+        🔍 [Search manure...] 🔽<br/><br/>
+        <b>Filters</b><br/>
+        Type: [All] [Cow] [Poultry] [Goat]<br/>
+        Distance: [Within 25 km]<br/>
+        Maturity: [Mature Only]<br/><br/>
+        <b>Available Listings</b><br/><br/>
+        📦 <b>Cow Manure - Fully Mature</b><br/>
+        🏭 Dairy Farm, Pune<br/>
+        📍 12 km away<br/>
+        Quantity: 5 Ton<br/>
+        Price: ₹3,000/Ton<br/>
+        ✅ Maturity Test: Passed (Score: 92)<br/>
+        [View Details] [Request Test]<br/><br/>
+        📦 <b>Poultry Manure - Mature</b><br/>
+        🏭 Poultry Farm, Nashik<br/>
+        📍 18 km away<br/>
+        Quantity: 3 Ton<br/>
+        Price: ₹4,500/Ton<br/>
+        ⏳ Maturity Test: Pending<br/>
+        [View Details] [Request Test]<br/><br/>
+        [+ Create Listing]
+        </div>"]
+    end
+```
+
+### 18. Maturity Test Result Screen
+
+```mermaid
+graph TD
+    subgraph "Maturity Test Result"
+        AA["<div style='text-align:center'>
+        ← Back | <b>Maturity Test</b><br/><br/>
+        ✅ <b>Fully Mature</b><br/><br/>
+        <b>Overall Score: 92/100</b><br/><br/>
+        [Photo of Manure]<br/><br/>
+        <b>Analysis Details</b><br/>
+        Color: 95/100 ✓<br/>
+        Dark brown/black color<br/><br/>
+        Texture: 90/100 ✓<br/>
+        Crumbly, well-decomposed<br/><br/>
+        Moisture: 88/100 ✓<br/>
+        Optimal moisture level<br/><br/>
+        Odor: 95/100 ✓<br/>
+        Earthy smell, no ammonia<br/><br/>
+        ✅ <b>Safe to Use Immediately</b><br/><br/>
+        <b>Usage Recommendations</b><br/>
+        • Apply 5-10 tons per acre<br/>
+        • Mix with soil before planting<br/>
+        • Suitable for all crops<br/><br/>
+        [Share Report] [Save to History]<br/>
+        [Buy This Manure]
+        </div>"]
+    end
+```
+
+### 19. Voice-to-Ad Creation Screen
+
+```mermaid
+graph TD
+    subgraph "Create Ad (Voice)"
+        AB["<div style='text-align:center'>
+        ← Back | <b>Create Ad</b><br/><br/>
+        🎤 <b>Describe Your Item</b><br/><br/>
+        [Microphone Animation]<br/><br/>
+        <span style='color:red'>● Recording...</span><br/>
+        00:45<br/><br/>
+        <b>Speak naturally:</b><br/>
+        • What are you selling?<br/>
+        • How much quantity?<br/>
+        • What price?<br/>
+        • Where are you located?<br/><br/>
+        [Stop Recording]<br/><br/>
+        ---<br/><br/>
+        <b>Ad Preview</b><br/><br/>
+        <b>Tomato Seeds for Sale</b><br/><br/>
+        [Photo of Seeds]<br/><br/>
+        High-quality hybrid tomato seeds<br/>
+        Quantity: 5 kg<br/>
+        Price: ₹500/kg<br/>
+        Location: Nashik, Maharashtra<br/>
+        Condition: New, sealed packets<br/><br/>
+        [Edit] [Retake Photo] [Publish]
+        </div>"]
+    end
+```
+
+### 20. Government Schemes Screen
+
+```mermaid
+graph TD
+    subgraph "Government Schemes"
+        AC["<div style='text-align:left'>
+        ← Back | <b>Govt Schemes</b><br/><br/>
+        <b>Your Eligibility Status</b><br/>
+        Profile: 85% Complete<br/>
+        [Complete Profile]<br/><br/>
+        ✅ <b>Eligible Schemes (5)</b><br/><br/>
+        🌾 <b>PM-KISAN</b><br/>
+        Direct income support<br/>
+        Benefit: ₹6,000/year<br/>
+        Status: ✅ Enrolled<br/>
+        [View Details]<br/><br/>
+        🚜 <b>Farm Machinery Subsidy</b><br/>
+        50% subsidy on equipment<br/>
+        Max: ₹50,000<br/>
+        Status: 🟢 Eligible<br/>
+        [Apply Now]<br/><br/>
+        🌧️ <b>Crop Insurance (PMFBY)</b><br/>
+        Weather & yield protection<br/>
+        Premium: ₹1,500/acre<br/>
+        Status: 🟢 Eligible<br/>
+        [Apply Now]<br/><br/>
+        ⚠️ <b>Partially Eligible (3)</b><br/><br/>
+        💳 <b>Kisan Credit Card</b><br/>
+        Missing: Bank statement<br/>
+        [Complete Requirements]<br/><br/>
+        🔴 <b>Not Eligible (2)</b><br/><br/>
+        [View All Schemes]
+        </div>"]
+    end
+```
+
+### 21. Route Optimization Screen
+
+```mermaid
+graph TD
+    subgraph "Route Optimization"
+        AD["<div style='text-align:left'>
+        ← Back | <b>Truck Pooling</b><br/><br/>
+        🚚 <b>Pooling Opportunity!</b><br/><br/>
+        <b>Your Pickup</b><br/>
+        📍 Your Farm, Nashik<br/>
+        📦 10 Quintal Tomato<br/>
+        🎯 Destination: Mumbai APMC<br/><br/>
+        <b>Nearby Pickups</b><br/>
+        📍 Farm A (8 km away)<br/>
+        📦 15 Quintal Onion<br/><br/>
+        📍 Farm B (12 km away)<br/>
+        📦 8 Quintal Potato<br/><br/>
+        [Map showing optimized route]<br/><br/>
+        <b>Cost Comparison</b><br/>
+        Individual: ₹3,500<br/>
+        Pooled: ₹1,200<br/>
+        💰 <b>You Save: ₹2,300 (66%)</b><br/><br/>
+        <b>Optimized Route</b><br/>
+        Your Farm → Farm A → Farm B → Mumbai<br/>
+        Total Distance: 185 km<br/>
+        Estimated Time: 4.5 hours<br/><br/>
+        [Accept Pooling] [Individual Booking]
+        </div>"]
+    end
+```
+
+### 22. Live Tracking Screen
+
+```mermaid
+graph TD
+    subgraph "Live Vehicle Tracking"
+        AE["<div style='text-align:center'>
+        ← Back | <b>Track Vehicle</b><br/><br/>
+        [Map View with Vehicle Icon]<br/><br/>
+        🚚 <b>Vehicle: MH-15-AB-1234</b><br/>
+        Driver: Ramesh Kumar<br/>
+        📞 [Call Driver]<br/><br/>
+        <b>Current Location</b><br/>
+        📍 NH-60, near Sinnar<br/>
+        Updated: 2 min ago<br/><br/>
+        <b>Status</b><br/>
+        🟢 On Route • On Time<br/><br/>
+        <b>Journey Progress</b><br/>
+        [Progress Bar: 65%]<br/><br/>
+        Pickup: ✅ Completed (2:30 PM)<br/>
+        Current: 🚚 In Transit<br/>
+        Delivery: ⏳ Expected 6:45 PM<br/><br/>
+        <b>Distance Remaining</b><br/>
+        85 km • 1 hour 45 min<br/><br/>
+        <b>Route</b><br/>
+        Nashik → Sinnar → Kalyan → Mumbai<br/><br/>
+        [Share Location] [Report Issue]
+        </div>"]
+    end
+```
+
+### 23. Traceability Screen
+
+```mermaid
+graph TD
+    subgraph "Product Traceability"
+        AF["<div style='text-align:left'>
+        ← Back | <b>Traceability</b><br/><br/>
+        <b>Scan QR Code</b><br/>
+        [QR Code Scanner]<br/><br/>
+        ---<br/><br/>
+        <b>Product Journey</b><br/><br/>
+        🌱 <b>Seed</b><br/>
+        Batch: TS-2025-1234<br/>
+        Supplier: ABC Seeds<br/>
+        Date: 1 Oct 2025<br/><br/>
+        🌾 <b>Sowing</b><br/>
+        Date: 5 Oct 2025<br/>
+        Location: Nashik, MH<br/>
+        [View Photo]<br/><br/>
+        💧 <b>Growth & Care</b><br/>
+        Irrigation: 15 events<br/>
+        Fertilizer: Urea, DAP, MOP<br/>
+        Pest Control: Neem oil (organic)<br/>
+        [View Timeline]<br/><br/>
+        ✂️ <b>Harvest</b><br/>
+        Date: 15 Jan 2026<br/>
+        Yield: 50 Quintal<br/>
+        [View Photo]<br/><br/>
+        ⭐ <b>Quality Grade</b><br/>
+        Grade: A (95% confidence)<br/>
+        Certificate: #QC-2026-5678<br/>
+        [View Certificate]<br/><br/>
+        📦 <b>Packaging</b><br/>
+        Package ID: PKG-2026-9012<br/>
+        Date: 15 Jan 2026<br/><br/>
+        🚚 <b>Delivery</b><br/>
+        Vehicle: MH-15-AB-1234<br/>
+        Delivered: 16 Jan 2026<br/>
+        [View Route]<br/><br/>
+        ✅ <b>Verified Authentic</b>
         </div>"]
     end
 ```
