@@ -1832,6 +1832,698 @@ interface Feedback {
 - Implicit factors weighted by transaction volume
 - Recent transactions weighted more heavily (exponential decay)
 
+### 11. Auction and Bidding Engine
+
+**Purpose**: Enable competitive bidding on quality-graded produce.
+
+**Components**:
+- Auction Manager
+- Bid Validator
+- Real-time Bid Tracker
+- Winner Notification System
+
+**Interface**:
+```typescript
+interface AuctionEngine {
+  createAuction(listing: AuctionListing): Promise<AuctionID>;
+  placeBid(auctionID: string, bidderID: string, bidAmount: number): Promise<BidConfirmation>;
+  getCurrentHighestBid(auctionID: string): Promise<Bid>;
+  closeAuction(auctionID: string): Promise<AuctionResult>;
+  getAuctionStatus(auctionID: string): Promise<AuctionStatus>;
+}
+
+interface AuctionListing {
+  listingID: string;
+  farmerID: string;
+  produceType: string;
+  quantity: number;
+  minimumBidPrice: number;
+  auctionDuration: number; // hours
+  qualityCertificate: DigitalQualityCertificate;
+  startTime: Date;
+  endTime: Date;
+}
+
+interface Bid {
+  bidID: string;
+  auctionID: string;
+  bidderID: string;
+  bidAmount: number;
+  timestamp: Date;
+  status: 'active' | 'outbid' | 'winning';
+}
+
+interface AuctionResult {
+  auctionID: string;
+  winningBid?: Bid;
+  totalBids: number;
+  finalPrice: number;
+  transactionCreated: boolean;
+}
+```
+
+### 12. Disease and Pest Diagnosis Module
+
+**Purpose**: AI-powered crop disease identification and treatment recommendations.
+
+**Components**:
+- Disease Detection AI Model
+- Treatment Knowledge Base
+- Supplier Integration
+- Photo-Log Integration
+
+**Interface**:
+```typescript
+interface DiseaseDiagnosisModule {
+  analyzeCropImage(image: ImageData, cropType: string): Promise<DiagnosisResult>;
+  getTreatmentRecommendations(diseaseID: string): Promise<TreatmentOptions>;
+  linkToSuppliers(treatmentID: string, location: Location): Promise<Supplier[]>;
+  saveDiagnosisToPhotoLog(farmerID: string, diagnosis: DiagnosisResult): Promise<PhotoLogEntry>;
+}
+
+interface DiagnosisResult {
+  diseaseType: string;
+  diseaseName: string;
+  severity: 'low' | 'medium' | 'high';
+  confidence: number;
+  affectedArea: number; // percentage
+  symptoms: string[];
+  timestamp: Date;
+}
+
+interface TreatmentOptions {
+  diseaseID: string;
+  chemicalTreatments: Treatment[];
+  organicTreatments: Treatment[];
+  preventiveMeasures: string[];
+}
+
+interface Treatment {
+  productName: string;
+  activeIngredient: string;
+  applicationMethod: string;
+  dosage: string;
+  frequency: string;
+  precautions: string[];
+  estimatedCost: number;
+}
+```
+
+**ML Model**:
+- Base: EfficientNet-B0 for mobile deployment
+- Training: 50+ common crop diseases across major crops
+- Accuracy: >85% on validation set
+- Model size: <30MB for offline use
+
+### 13. Crop-AI Advisor
+
+**Purpose**: Multimodal AI assistant for farming queries with visual analysis.
+
+**Components**:
+- Multimodal AI Engine (text + image/video)
+- Crop Recognition System
+- Growth Stage Analyzer
+- Contextual Recommendation Engine
+
+**Interface**:
+```typescript
+interface CropAIAdvisor {
+  processTextQuery(query: string, language: string, context: FarmerContext): Promise<AdvisorResponse>;
+  processMultimodalQuery(query: string, media: ImageData | VideoData, language: string): Promise<AdvisorResponse>;
+  analyzeCropVisual(media: ImageData | VideoData): Promise<CropAnalysis>;
+  getLocationBasedAdvice(query: string, location: Location, season: string): Promise<AdvisorResponse>;
+}
+
+interface FarmerContext {
+  farmerID: string;
+  location: Location;
+  currentCrops: string[];
+  soilData?: SoilHealthData;
+  recentActivities: PhotoLogEntry[];
+}
+
+interface CropAnalysis {
+  cropType: string;
+  growthStage: string;
+  healthStatus: 'healthy' | 'stressed' | 'diseased';
+  issues: string[];
+  recommendations: string[];
+}
+
+interface AdvisorResponse {
+  answer: string;
+  confidence: number;
+  sources: string[];
+  actionableSteps: string[];
+  relatedQueries: string[];
+  visualAnalysis?: CropAnalysis;
+}
+```
+
+### 14. Soil Health Records Module
+
+**Purpose**: Digitize and track soil test reports for data-driven farming.
+
+**Components**:
+- OCR Engine for Soil Reports
+- Soil Data Parser
+- Trend Analyzer
+- Fertilizer Recommendation Engine
+
+**Interface**:
+```typescript
+interface SoilHealthModule {
+  uploadSoilReport(image: ImageData, farmerID: string): Promise<SoilTestRecord>;
+  extractSoilData(image: ImageData): Promise<SoilParameters>;
+  getSoilTrends(farmerID: string, fieldID: string): Promise<SoilTrend[]>;
+  getFertilizerRecommendations(soilData: SoilParameters, cropType: string): Promise<FertilizerPlan>;
+  suggestCrops(soilData: SoilParameters, season: string): Promise<CropSuggestion[]>;
+}
+
+interface SoilTestRecord {
+  id: string;
+  farmerID: string;
+  fieldID: string;
+  testDate: Date;
+  labName: string;
+  parameters: SoilParameters;
+  uploadedAt: Date;
+}
+
+interface SoilParameters {
+  pH: number;
+  nitrogen: number; // kg/ha
+  phosphorus: number; // kg/ha
+  potassium: number; // kg/ha
+  organicCarbon: number; // %
+  micronutrients: {
+    zinc?: number;
+    iron?: number;
+    manganese?: number;
+    copper?: number;
+    boron?: number;
+  };
+}
+
+interface SoilTrend {
+  parameter: string;
+  values: { date: Date; value: number }[];
+  trend: 'improving' | 'stable' | 'declining';
+  optimalRange: { min: number; max: number };
+}
+
+interface FertilizerPlan {
+  cropType: string;
+  recommendations: {
+    nutrient: string;
+    currentLevel: number;
+    targetLevel: number;
+    deficiency: number;
+    fertilizer: string;
+    applicationRate: string;
+    timing: string;
+  }[];
+  estimatedCost: number;
+}
+```
+
+### 15. Smart Alerts and Predictive Advisory
+
+**Purpose**: Proactive multi-channel alerts for weather, pests, prices, and schemes.
+
+**Components**:
+- Weather API Integration
+- Pest Outbreak Tracker
+- Price Fluctuation Monitor
+- Government Scheme Tracker
+- Multi-Channel Notification Dispatcher
+
+**Interface**:
+```typescript
+interface SmartAlertSystem {
+  subscribeToAlerts(farmerID: string, alertTypes: AlertType[]): Promise<void>;
+  sendWeatherAlert(region: string, weatherEvent: WeatherEvent): Promise<void>;
+  sendPestAlert(region: string, pestType: string, severity: string): Promise<void>;
+  sendPriceAlert(farmerID: string, produceType: string, priceChange: number): Promise<void>;
+  sendSchemeAlert(farmerID: string, scheme: GovernmentScheme): Promise<void>;
+  sendHarvestReminder(farmerID: string, cropType: string, estimatedDate: Date): Promise<void>;
+}
+
+type AlertType = 'weather' | 'pest' | 'price' | 'scheme' | 'harvest' | 'power_cut';
+
+interface WeatherEvent {
+  type: 'rain' | 'heatwave' | 'frost' | 'storm' | 'drought';
+  severity: 'low' | 'medium' | 'high';
+  startTime: Date;
+  duration: number; // hours
+  affectedRegions: string[];
+  actionableSuggestions: string[];
+}
+
+interface Alert {
+  id: string;
+  type: AlertType;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  title: string;
+  message: string;
+  actionableSuggestions: string[];
+  channels: ('push' | 'sms' | 'voice')[];
+  expiresAt: Date;
+}
+```
+
+### 16. Manure and Compost Marketplace
+
+**Purpose**: Connect crop farmers with dairy/poultry farms for organic manure.
+
+**Components**:
+- Manure Listing Manager
+- Quality Verification System
+- Bulk Logistics Coordinator
+- Proximity-Based Search
+
+**Interface**:
+```typescript
+interface ManureMarketplace {
+  createManureListing(listing: ManureListing): Promise<ListingID>;
+  searchManure(filters: ManureFilters): Promise<ManureListing[]>;
+  purchaseManure(listingID: string, buyerID: string, quantity: number): Promise<ManureOrder>;
+  verifyManureQuality(orderID: string, deliveryProof: DeliveryProof): Promise<QualityVerification>;
+  rateManureTransaction(orderID: string, rating: number, feedback: string): Promise<void>;
+}
+
+interface ManureListing {
+  id: string;
+  sellerID: string;
+  manureType: 'cow' | 'buffalo' | 'poultry' | 'goat' | 'mixed';
+  quantity: number; // tons
+  maturityStatus: 'fully_decomposed' | 'partially_decomposed' | 'raw';
+  maturityTestResult?: MaturityTestResult;
+  pricePerTon: number;
+  location: Location;
+  photos: ImageData[];
+  availableFrom: Date;
+  status: 'available' | 'reserved' | 'sold';
+}
+
+interface ManureFilters {
+  manureType?: string[];
+  maturityStatus?: string[];
+  maxDistance?: number; // km
+  priceRange?: { min: number; max: number };
+  minQuantity?: number;
+}
+
+interface ManureOrder {
+  orderID: string;
+  listingID: string;
+  buyerID: string;
+  sellerID: string;
+  quantity: number;
+  totalPrice: number;
+  logisticsArranged: boolean;
+  estimatedDelivery: Date;
+}
+```
+
+### 17. Manure Maturity Test Module
+
+**Purpose**: AI-powered verification of manure decomposition status.
+
+**Components**:
+- Visual Analysis AI Model
+- Maturity Classification Engine
+- Certificate Generator
+- Composting Advisor
+
+**Interface**:
+```typescript
+interface ManureMaturityTest {
+  analyzeManure(media: ImageData | VideoData): Promise<MaturityTestResult>;
+  generateMaturityCertificate(result: MaturityTestResult): Promise<MaturityCertificate>;
+  getCompostingAdvice(result: MaturityTestResult): Promise<CompostingGuidance>;
+}
+
+interface MaturityTestResult {
+  maturityLevel: 'fully_decomposed' | 'partially_decomposed' | 'raw';
+  confidence: number;
+  visualCharacteristics: {
+    color: string;
+    texture: string;
+    moistureLevel: 'dry' | 'optimal' | 'wet';
+  };
+  decompositionPercentage: number;
+  estimatedCompostingTime?: number; // days remaining
+  safeForUse: boolean;
+  warnings: string[];
+}
+
+interface MaturityCertificate {
+  id: string;
+  testDate: Date;
+  maturityLevel: string;
+  confidence: number;
+  sellerID: string;
+  validUntil: Date;
+}
+
+interface CompostingGuidance {
+  currentStage: string;
+  remainingTime: number; // days
+  recommendations: string[];
+  turningFrequency: string;
+  moistureManagement: string;
+}
+```
+
+### 18. Voice-to-Ad Generation Module
+
+**Purpose**: Convert voice descriptions and photos into marketplace listings.
+
+**Components**:
+- Speech-to-Text Engine
+- Information Extraction NLP
+- Image Analysis for Ad Enhancement
+- Ad Template Generator
+
+**Interface**:
+```typescript
+interface VoiceToAdGenerator {
+  recordVoiceInput(language: string): Promise<AudioData>;
+  transcribeAndExtract(audio: AudioData, language: string): Promise<ExtractedInfo>;
+  enhanceWithImages(extractedInfo: ExtractedInfo, images: ImageData[]): Promise<EnhancedAdData>;
+  generateAdPreview(adData: EnhancedAdData): Promise<AdPreview>;
+  publishAd(adData: EnhancedAdData, farmerID: string): Promise<ListingID>;
+  askClarifyingQuestion(context: ExtractedInfo): Promise<string>;
+}
+
+interface ExtractedInfo {
+  itemType: string;
+  quantity?: number;
+  unit?: string;
+  price?: number;
+  condition?: string;
+  description?: string;
+  confidence: number;
+  missingFields: string[];
+}
+
+interface EnhancedAdData {
+  title: string;
+  description: string;
+  itemType: string;
+  quantity: number;
+  unit: string;
+  price: number;
+  condition: string;
+  photos: ImageData[];
+  category: string;
+  tags: string[];
+}
+
+interface AdPreview {
+  title: string;
+  description: string;
+  formattedPrice: string;
+  photos: ImageData[];
+  estimatedReach: number;
+  suggestedEdits: string[];
+}
+```
+
+### 19. Government Scheme Eligibility Engine
+
+**Purpose**: Match farmers with eligible government schemes and subsidies.
+
+**Components**:
+- Scheme Database Manager
+- Eligibility Matcher
+- Document Requirement Checker
+- Application Portal Integrator
+
+**Interface**:
+```typescript
+interface SchemeEligibilityEngine {
+  getEligibleSchemes(farmerProfile: FarmerProfile): Promise<EligibleScheme[]>;
+  checkEligibility(farmerProfile: FarmerProfile, schemeID: string): Promise<EligibilityResult>;
+  getRequiredDocuments(schemeID: string): Promise<DocumentRequirement[]>;
+  prepareApplication(farmerID: string, schemeID: string): Promise<ApplicationPackage>;
+  trackApplication(applicationID: string): Promise<ApplicationStatus>;
+}
+
+interface FarmerProfile {
+  farmerID: string;
+  name: string;
+  location: Location;
+  landSize: number; // acres
+  landOwnership: 'owned' | 'leased' | 'sharecropper';
+  cropTypes: string[];
+  annualIncome: number;
+  category: 'general' | 'obc' | 'sc' | 'st';
+  hasKisanCreditCard: boolean;
+  hasSoilHealthCard: boolean;
+}
+
+interface EligibleScheme {
+  schemeID: string;
+  schemeName: string;
+  description: string;
+  benefits: string[];
+  eligibilityCriteria: string[];
+  applicationDeadline: Date;
+  estimatedBenefit: number;
+  matchScore: number; // 0-100
+  applicationLink: string;
+}
+
+interface EligibilityResult {
+  isEligible: boolean;
+  matchedCriteria: string[];
+  unmatchedCriteria: string[];
+  recommendations: string[];
+}
+
+interface DocumentRequirement {
+  documentType: string;
+  description: string;
+  mandatory: boolean;
+  canUploadFromPhotoLog: boolean;
+}
+
+interface ApplicationPackage {
+  schemeID: string;
+  farmerID: string;
+  documents: { type: string; fileID: string }[];
+  formData: Record<string, any>;
+  readyToSubmit: boolean;
+  missingItems: string[];
+}
+```
+
+### 20. Logistics Route Optimization Module
+
+**Purpose**: Optimize multi-farmer pickup routes for cost efficiency.
+
+**Components**:
+- Route Optimizer Algorithm
+- Vehicle Capacity Manager
+- Time Window Scheduler
+- Navigation Provider
+
+**Interface**:
+```typescript
+interface RouteOptimizer {
+  findOptimalRoute(pickups: PickupRequest[], vehicle: VehicleInfo): Promise<OptimizedRoute>;
+  notifyFarmers(route: OptimizedRoute): Promise<void>;
+  provideNavigation(routeID: string, driverID: string): Promise<NavigationInstructions>;
+  updatePickupStatus(routeID: string, pickupID: string, status: string): Promise<void>;
+  calculateCostSavings(optimizedRoute: OptimizedRoute, individualRoutes: Route[]): Promise<CostComparison>;
+}
+
+interface PickupRequest {
+  farmerID: string;
+  location: Location;
+  produceType: string;
+  quantity: number;
+  timeWindow: { start: Date; end: Date };
+  deliveryDestination: Location;
+}
+
+interface VehicleInfo {
+  vehicleID: string;
+  capacity: number; // kg
+  currentLocation: Location;
+  availableFrom: Date;
+}
+
+interface OptimizedRoute {
+  routeID: string;
+  vehicleID: string;
+  pickups: ScheduledPickup[];
+  totalDistance: number; // km
+  estimatedDuration: number; // minutes
+  totalLoad: number; // kg
+  costPerFarmer: number;
+}
+
+interface ScheduledPickup {
+  pickupID: string;
+  farmerID: string;
+  location: Location;
+  scheduledTime: Date;
+  estimatedArrival: Date;
+  quantity: number;
+  sequenceNumber: number;
+}
+
+interface CostComparison {
+  optimizedCost: number;
+  individualCostSum: number;
+  savings: number;
+  savingsPercentage: number;
+}
+```
+
+### 21. Live Vehicle Tracking Module
+
+**Purpose**: Real-time GPS tracking of produce during transport.
+
+**Components**:
+- GPS Tracker Integration
+- Real-time Location Updater
+- Route Deviation Detector
+- ETA Calculator
+
+**Interface**:
+```typescript
+interface LiveTrackingModule {
+  startTracking(vehicleID: string, transactionID: string): Promise<TrackingSession>;
+  getVehicleLocation(sessionID: string): Promise<VehicleLocation>;
+  getTrackingHistory(sessionID: string): Promise<LocationHistory[]>;
+  detectRouteDeviation(sessionID: string, plannedRoute: Route): Promise<DeviationAlert | null>;
+  stopTracking(sessionID: string): Promise<TrackingSummary>;
+}
+
+interface TrackingSession {
+  sessionID: string;
+  vehicleID: string;
+  transactionID: string;
+  startTime: Date;
+  plannedRoute: Route;
+  status: 'active' | 'paused' | 'completed';
+}
+
+interface VehicleLocation {
+  latitude: number;
+  longitude: number;
+  timestamp: Date;
+  speed: number; // km/h
+  heading: number; // degrees
+  accuracy: number; // meters
+  distanceRemaining: number; // km
+  estimatedTimeOfArrival: Date;
+}
+
+interface LocationHistory {
+  timestamp: Date;
+  location: { latitude: number; longitude: number };
+  speed: number;
+  event?: 'stop' | 'deviation' | 'arrival';
+}
+
+interface DeviationAlert {
+  deviationDistance: number; // km
+  deviationType: 'minor' | 'major';
+  currentLocation: Location;
+  plannedLocation: Location;
+  suggestedAction: string;
+}
+
+interface TrackingSummary {
+  sessionID: string;
+  totalDistance: number;
+  totalDuration: number; // minutes
+  averageSpeed: number;
+  stops: number;
+  deviations: number;
+  onTimeArrival: boolean;
+}
+```
+
+### 22. End-to-End Traceability Module
+
+**Purpose**: Complete produce journey tracking from seed to shelf.
+
+**Components**:
+- Traceability Record Manager
+- Activity Linker
+- QR Code Generator
+- Blockchain Integration (optional)
+
+**Interface**:
+```typescript
+interface TraceabilityModule {
+  createTraceabilityRecord(farmerID: string, cropType: string, seedSource: string): Promise<TraceabilityRecord>;
+  linkActivity(recordID: string, activity: TraceableActivity): Promise<void>;
+  linkQualityCertificate(recordID: string, certificateID: string): Promise<void>;
+  linkTransaction(recordID: string, transactionID: string): Promise<void>;
+  linkLogistics(recordID: string, trackingData: TrackingSummary): Promise<void>;
+  getCompleteTrace(recordID: string): Promise<CompleteTraceability>;
+  generateQRCode(recordID: string): Promise<QRCodeData>;
+  generateBlockchainCertificate(recordID: string): Promise<BlockchainCertificate>;
+}
+
+interface TraceabilityRecord {
+  recordID: string;
+  farmerID: string;
+  cropType: string;
+  seedSource: string;
+  plantingDate: Date;
+  fieldLocation: Location;
+  status: 'growing' | 'harvested' | 'sold' | 'delivered';
+  createdAt: Date;
+}
+
+interface TraceableActivity {
+  activityType: 'tilling' | 'sowing' | 'irrigation' | 'fertilization' | 'pesticide' | 'harvest';
+  timestamp: Date;
+  details: {
+    inputs?: { name: string; quantity: number; unit: string }[];
+    method?: string;
+    notes?: string;
+  };
+  photoLogEntryID?: string;
+}
+
+interface CompleteTraceability {
+  recordID: string;
+  farmer: { id: string; name: string; location: Location };
+  crop: { type: string; variety: string };
+  seedSource: string;
+  plantingDate: Date;
+  farmingActivities: TraceableActivity[];
+  inputsUsed: { type: string; name: string; quantity: number; date: Date }[];
+  qualityCertificate: DigitalQualityCertificate;
+  transaction: { id: string; buyer: string; date: Date; price: number };
+  logistics: { provider: string; route: Route; trackingData: TrackingSummary };
+  verificationStatus: 'verified' | 'pending' | 'unverified';
+}
+
+interface QRCodeData {
+  qrCodeImage: string; // base64
+  recordID: string;
+  verificationURL: string;
+}
+
+interface BlockchainCertificate {
+  certificateID: string;
+  blockchainHash: string;
+  timestamp: Date;
+  verificationURL: string;
+  immutable: boolean;
+}
+```
+
 ## Data Models
 
 ### Core Entities
@@ -1919,6 +2611,16 @@ interface BankAccount {
 - service_providers
 - logistics_orders
 - storage_bookings
+- auctions
+- bids
+- manure_listings
+- manure_orders
+- soil_test_records
+- government_schemes
+- scheme_applications
+- route_optimizations
+- tracking_sessions
+- traceability_records
 
 **MongoDB Collections** (Document Data):
 - photo_logs
@@ -1926,6 +2628,13 @@ interface BankAccount {
 - price_predictions
 - voice_queries
 - feedback_comments
+- disease_diagnoses
+- crop_ai_conversations
+- soil_trends
+- alerts
+- maturity_certificates
+- voice_ads
+- traceability_activities
 
 **Local SQLite** (Offline Cache):
 - cached_listings
@@ -1933,6 +2642,8 @@ interface BankAccount {
 - local_photo_logs
 - user_profile
 - ai_models_metadata
+- cached_schemes
+- offline_diagnoses
 
 
 ## Correctness Properties
@@ -2130,6 +2841,96 @@ interface BankAccount {
 *For any* user profile view, the displayed rating information SHALL include overall score AND breakdown of contributing factors.
 
 **Validates: Requirements 18.5**
+
+### Property 33: Auction Bid Validation
+
+*For any* bid placed on an auction listing, the bid amount SHALL be greater than the current highest bid.
+
+**Validates: Requirements 19.4**
+
+### Property 34: Auction Winner Notification
+
+*For any* auction that expires, the winning bidder and farmer SHALL be notified within 1 minute of auction closure.
+
+**Validates: Requirements 19.6**
+
+### Property 35: Disease Diagnosis Completeness
+
+*For any* crop image analyzed by the Disease Diagnosis Module, the result SHALL contain disease type, severity level, and confidence score.
+
+**Validates: Requirements 20.2, 20.3**
+
+### Property 36: Treatment Recommendation Availability
+
+*For any* identified disease, the system SHALL provide both chemical and organic treatment recommendations.
+
+**Validates: Requirements 20.4**
+
+### Property 37: Crop-AI Multimodal Analysis
+
+*For any* farmer query with photo or video, the Crop-AI Advisor SHALL analyze the visual content and incorporate findings into the response.
+
+**Validates: Requirements 21.2, 21.3**
+
+### Property 38: Soil Test Data Extraction
+
+*For any* uploaded soil test report photo, the system SHALL extract at least pH, nitrogen, phosphorus, and potassium values using OCR.
+
+**Validates: Requirements 22.2**
+
+### Property 39: Soil Deficiency Detection
+
+*For any* soil parameter outside optimal range, the system SHALL highlight the deficiency and suggest corrective actions.
+
+**Validates: Requirements 22.6, 22.7**
+
+### Property 40: Multi-Channel Alert Delivery
+
+*For any* critical alert (weather, pest, price), the system SHALL attempt delivery through at least two channels (push, SMS, voice).
+
+**Validates: Requirements 23.7**
+
+### Property 41: Manure Listing Proximity Prioritization
+
+*For any* manure marketplace search, results SHALL be ordered by geographic distance from the farmer's location.
+
+**Validates: Requirements 24.8**
+
+### Property 42: Manure Maturity Classification
+
+*For any* manure image analyzed, the Maturity Test Module SHALL classify it as one of {Fully Decomposed, Partially Decomposed, Raw}.
+
+**Validates: Requirements 25.3**
+
+### Property 43: Voice-to-Ad Information Extraction
+
+*For any* voice recording for ad generation, the system SHALL extract at least item type and quantity from the transcription.
+
+**Validates: Requirements 26.3**
+
+### Property 44: Scheme Eligibility Matching
+
+*For any* farmer profile, the Eligibility Engine SHALL match against all available government schemes and return only schemes where eligibility criteria are met.
+
+**Validates: Requirements 27.2, 27.4**
+
+### Property 45: Route Optimization Cost Savings
+
+*For any* optimized multi-farmer route, the total distance SHALL be less than or equal to the sum of individual direct routes.
+
+**Validates: Requirements 28.3, 28.8**
+
+### Property 46: Live Tracking Real-Time Updates
+
+*For any* active vehicle tracking session, location updates SHALL be provided at intervals of 30 seconds or less.
+
+**Validates: Requirements 29.2, 29.3**
+
+### Property 47: Traceability Record Completeness
+
+*For any* produce sold through the platform, the traceability record SHALL contain seed source, farming activities, quality certificate, transaction details, and logistics information.
+
+**Validates: Requirements 30.1, 30.2, 30.3, 30.4, 30.5, 30.6**
 
 ## Error Handling
 
