@@ -223,6 +223,200 @@ The platform uses a multi-tier sync strategy:
 3. **Conflict Resolution**: Server timestamp wins for transaction states, merge for Photo-Log entries
 4. **Selective Sync**: Only sync data relevant to user's region and activity
 
+### AWS Cloud Architecture
+
+```mermaid
+graph TB
+    subgraph "Client Layer"
+        Mobile[📱 React Native App<br/>iOS & Android]
+        Web[🌐 Web Dashboard<br/>Admin Portal]
+    end
+    
+    subgraph "AWS Cloud - Region: ap-south-1 Mumbai"
+        subgraph "Edge & CDN"
+            CF[☁️ CloudFront<br/>CDN & Edge Caching]
+            R53[🌍 Route 53<br/>DNS Management]
+        end
+        
+        subgraph "Application Layer - VPC"
+            ALB[⚖️ Application Load Balancer<br/>Auto-scaling]
+            
+            subgraph "ECS Fargate Cluster"
+                API1[🔷 API Service<br/>Container 1]
+                API2[🔷 API Service<br/>Container 2]
+                Auth[🔐 Auth Service<br/>Container]
+                Market[🛒 Marketplace Service<br/>Container]
+                Escrow[💰 Escrow Service<br/>Container]
+                Rating[⭐ Rating Service<br/>Container]
+                Voice[🎤 Voice Assistant<br/>Container]
+            end
+        end
+        
+        subgraph "AI/ML Layer"
+            SM[🤖 SageMaker<br/>Price Prediction Model]
+            Lambda1[⚡ Lambda<br/>Image Processing]
+            Lambda2[⚡ Lambda<br/>Certificate Generation]
+        end
+        
+        subgraph "Data Layer"
+            RDS[(🗄️ RDS PostgreSQL<br/>Multi-AZ<br/>Transactional Data)]
+            DocDB[(📄 DocumentDB<br/>MongoDB Compatible<br/>Photo Logs & Certificates)]
+            ElastiCache[⚡ ElastiCache Redis<br/>Session & Cache]
+        end
+        
+        subgraph "Storage Layer"
+            S3Main[📦 S3 Bucket<br/>Images & Documents]
+            S3ML[📦 S3 Bucket<br/>ML Models]
+            S3Backup[📦 S3 Glacier<br/>Backups & Archives]
+        end
+        
+        subgraph "Integration Services"
+            SNS[📢 SNS<br/>Push Notifications]
+            SQS[📬 SQS<br/>Message Queue]
+            SES[📧 SES<br/>Email Service]
+            Pinpoint[📱 Pinpoint<br/>SMS/OTP]
+        end
+        
+        subgraph "Monitoring & Security"
+            CW[📊 CloudWatch<br/>Logs & Metrics]
+            WAF[🛡️ WAF<br/>Web Application Firewall]
+            KMS[🔑 KMS<br/>Encryption Keys]
+            Secrets[🔐 Secrets Manager<br/>Credentials]
+            Cognito[👤 Cognito<br/>User Pools]
+        end
+        
+        subgraph "External Integrations"
+            PayGW[💳 Payment Gateway<br/>Razorpay/Paytm API]
+            WhatsApp[💬 WhatsApp Business API]
+            Maps[🗺️ Google Maps API]
+        end
+    end
+    
+    Mobile --> CF
+    Web --> CF
+    CF --> R53
+    R53 --> ALB
+    ALB --> API1
+    ALB --> API2
+    
+    API1 --> Auth
+    API1 --> Market
+    API1 --> Escrow
+    API1 --> Rating
+    API1 --> Voice
+    
+    API2 --> Auth
+    API2 --> Market
+    API2 --> Escrow
+    
+    Auth --> RDS
+    Auth --> Cognito
+    Auth --> ElastiCache
+    
+    Market --> RDS
+    Market --> DocDB
+    Market --> S3Main
+    Market --> SQS
+    
+    Escrow --> RDS
+    Escrow --> PayGW
+    Escrow --> SNS
+    
+    Rating --> RDS
+    Rating --> ElastiCache
+    
+    Voice --> ElastiCache
+    Voice --> WhatsApp
+    
+    Lambda1 --> S3Main
+    Lambda2 --> DocDB
+    Lambda2 --> S3Main
+    
+    SM --> S3ML
+    SM --> RDS
+    
+    SQS --> Lambda1
+    SQS --> Lambda2
+    
+    SNS --> Mobile
+    Pinpoint --> Mobile
+    SES --> Web
+    
+    Market --> Maps
+    
+    RDS --> S3Backup
+    DocDB --> S3Backup
+    
+    ALB --> WAF
+    S3Main --> KMS
+    RDS --> KMS
+    Auth --> Secrets
+    Escrow --> Secrets
+    
+    API1 --> CW
+    API2 --> CW
+    Lambda1 --> CW
+    Lambda2 --> CW
+```
+
+### AWS Services Breakdown
+
+**Compute:**
+- **ECS Fargate**: Serverless container orchestration for microservices
+- **Lambda**: Event-driven functions for image processing and certificate generation
+- **SageMaker**: ML model training and inference for price prediction
+
+**Storage:**
+- **S3**: Object storage for images, documents, and ML models
+- **S3 Glacier**: Long-term archival storage for backups
+- **EBS**: Persistent volumes for containers
+
+**Database:**
+- **RDS PostgreSQL (Multi-AZ)**: Primary transactional database with automatic failover
+- **DocumentDB**: MongoDB-compatible database for photo logs and certificates
+- **ElastiCache Redis**: In-memory cache for sessions and frequently accessed data
+
+**Networking:**
+- **VPC**: Isolated network with public and private subnets
+- **Application Load Balancer**: Distributes traffic across containers
+- **CloudFront**: Global CDN for low-latency content delivery
+- **Route 53**: DNS management and health checks
+
+**Security:**
+- **WAF**: Protection against common web exploits
+- **KMS**: Encryption key management for data at rest
+- **Secrets Manager**: Secure storage for API keys and credentials
+- **Cognito**: User authentication and authorization
+- **IAM**: Fine-grained access control
+
+**Integration:**
+- **SNS**: Push notifications to mobile devices
+- **SQS**: Asynchronous message queue for background processing
+- **SES**: Transactional email delivery
+- **Pinpoint**: SMS/OTP delivery for authentication
+
+**Monitoring:**
+- **CloudWatch**: Centralized logging, metrics, and alarms
+- **X-Ray**: Distributed tracing for debugging
+- **CloudTrail**: API audit logging
+
+### Cost Optimization Strategy
+
+1. **Auto-scaling**: Scale containers based on demand
+2. **Spot Instances**: Use for non-critical batch processing
+3. **S3 Lifecycle Policies**: Move old data to Glacier
+4. **Reserved Instances**: For RDS and ElastiCache
+5. **Lambda**: Pay only for actual execution time
+6. **CloudFront**: Reduce origin requests with caching
+
+### High Availability & Disaster Recovery
+
+- **Multi-AZ Deployment**: RDS and DocumentDB across availability zones
+- **Auto-scaling**: Automatic container scaling based on load
+- **S3 Cross-Region Replication**: Backup to secondary region
+- **RDS Automated Backups**: Daily snapshots with point-in-time recovery
+- **Route 53 Health Checks**: Automatic failover to healthy endpoints
+
 ## Process Flow Diagrams
 
 ### 1. Farmer Onboarding and Produce Listing Flow
