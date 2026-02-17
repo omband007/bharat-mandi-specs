@@ -533,6 +533,282 @@ graph TB
 - **RDS Automated Backups**: Daily snapshots with point-in-time recovery
 - **Route 53 Health Checks**: Automatic failover to healthy endpoints
 
+### Database Implementation (Completed)
+
+The platform uses a **polyglot persistence** architecture with three databases, each optimized for specific use cases:
+
+#### PostgreSQL - Transactional Database
+**Purpose**: ACID-compliant storage for financial transactions and relational data
+**Tables**: 19 tables
+**Key Features**:
+- UUID primary keys for better distribution
+- Foreign key constraints for referential integrity
+- Compound indexes for query optimization
+- Automatic timestamp updates via triggers
+- Connection pooling (max 20 connections)
+
+**Core Tables**:
+1. **users** - All platform users (farmers, buyers, providers)
+2. **listings** - Marketplace produce listings
+3. **transactions** - Purchase transactions
+4. **escrow_accounts** - Secure payment escrow
+5. **ratings** - User ratings and feedback
+6. **credibility_scores** - Farmer credibility system
+7. **credibility_score_history** - Score change audit trail
+8. **service_providers** - Logistics, storage, suppliers
+9. **logistics_orders** - Delivery orders
+10. **storage_bookings** - Cold storage bookings
+11. **auction_listings** - Auction-based listings
+12. **bids** - Auction bids
+13. **government_schemes** - Available schemes
+14. **scheme_applications** - Farmer applications
+15. **route_optimizations** - Optimized delivery routes
+16. **vehicle_tracking** - Real-time vehicle locations
+17. **disputes** - Transaction disputes
+18. **dispute_evidence** - Dispute evidence submissions
+19. **migrations** - Migration tracking
+
+**Key Relationships**:
+```
+users (1) ──→ (N) listings ──→ (N) transactions ──→ (1) escrow_accounts
+users (1) ──→ (N) credibility_scores ──→ (N) credibility_score_history
+transactions (1) ──→ (N) ratings
+listings (1) ──→ (1) auction_listings ──→ (N) bids
+transactions (1) ──→ (1) logistics_orders ──→ (N) vehicle_tracking
+transactions (1) ──→ (1) disputes ──→ (N) dispute_evidence
+```
+
+**Entity Relationship Diagram**:
+
+```mermaid
+erDiagram
+    USERS ||--o{ LISTINGS : creates
+    USERS ||--o{ TRANSACTIONS : "buyer/seller"
+    USERS ||--o{ CREDIBILITY_SCORES : has
+    USERS ||--o{ RATINGS : "gives/receives"
+    
+    LISTINGS ||--o{ TRANSACTIONS : "generates"
+    LISTINGS ||--o| AUCTION_LISTINGS : "can be"
+    
+    TRANSACTIONS ||--|| ESCROW_ACCOUNTS : "has"
+    TRANSACTIONS ||--o{ RATINGS : receives
+    TRANSACTIONS ||--o| LOGISTICS_ORDERS : "may have"
+    TRANSACTIONS ||--o| DISPUTES : "may have"
+    
+    AUCTION_LISTINGS ||--o{ BIDS : receives
+    
+    LOGISTICS_ORDERS ||--o{ VEHICLE_TRACKING : tracked
+    
+    DISPUTES ||--o{ DISPUTE_EVIDENCE : contains
+    
+    CREDIBILITY_SCORES ||--o{ CREDIBILITY_SCORE_HISTORY : "tracks changes"
+    
+    USERS {
+        uuid id PK
+        string phone_number UK
+        string name
+        enum user_type
+        jsonb location
+        jsonb bank_account
+        timestamp created_at
+    }
+    
+    LISTINGS {
+        uuid id PK
+        uuid farmer_id FK
+        string produce_type
+        decimal quantity
+        decimal price_per_unit
+        string grade
+        uuid certificate_id
+        enum status
+        timestamp created_at
+    }
+    
+    TRANSACTIONS {
+        uuid id PK
+        uuid listing_id FK
+        uuid buyer_id FK
+        uuid seller_id FK
+        decimal quantity
+        decimal total_amount
+        enum status
+        timestamp created_at
+    }
+    
+    ESCROW_ACCOUNTS {
+        uuid id PK
+        uuid transaction_id FK
+        decimal amount
+        enum status
+        timestamp locked_at
+        timestamp released_at
+    }
+    
+    RATINGS {
+        uuid id PK
+        uuid transaction_id FK
+        uuid from_user_id FK
+        uuid to_user_id FK
+        integer rating
+        text comment
+        timestamp created_at
+    }
+    
+    CREDIBILITY_SCORES {
+        uuid id PK
+        uuid user_id FK
+        integer score
+        jsonb components
+        timestamp updated_at
+    }
+    
+    AUCTION_LISTINGS {
+        uuid id PK
+        uuid listing_id FK
+        timestamp start_time
+        timestamp end_time
+        decimal starting_price
+        decimal current_highest_bid
+        enum status
+    }
+    
+    BIDS {
+        uuid id PK
+        uuid auction_id FK
+        uuid bidder_id FK
+        decimal bid_amount
+        timestamp bid_time
+    }
+    
+    LOGISTICS_ORDERS {
+        uuid id PK
+        uuid transaction_id FK
+        uuid provider_id FK
+        jsonb pickup_location
+        jsonb delivery_location
+        timestamp pickup_time
+        timestamp delivery_time
+        enum status
+    }
+    
+    VEHICLE_TRACKING {
+        uuid id PK
+        uuid logistics_order_id FK
+        jsonb current_location
+        timestamp timestamp
+        string status
+    }
+    
+    DISPUTES {
+        uuid id PK
+        uuid transaction_id FK
+        uuid raised_by FK
+        text reason
+        enum status
+        timestamp created_at
+    }
+    
+    DISPUTE_EVIDENCE {
+        uuid id PK
+        uuid dispute_id FK
+        uuid submitted_by FK
+        string evidence_type
+        text description
+        string file_url
+        timestamp submitted_at
+    }
+```
+
+#### MongoDB - Document Database
+**Purpose**: Flexible schema storage for unstructured/semi-structured data
+**Collections**: 10 collections
+**Key Features**:
+- Flexible schemas for evolving data structures
+- Compound indexes for efficient queries
+- Document size limit: 16MB
+- Connection pooling (min 5, max 10)
+- Aggregation pipeline for complex queries
+
+**Collections**:
+1. **photo_logs** - Farming activity photos with GPS metadata
+2. **quality_certificates** - AI-generated quality certificates
+3. **price_predictions** - 7-day price forecasts
+4. **voice_queries** - Voice assistant query history
+5. **feedback_comments** - Detailed user feedback
+6. **disease_diagnoses** - Crop disease diagnoses with treatments
+7. **soil_test_reports** - Soil health test results
+8. **smart_alerts** - Weather, pest, price alerts
+9. **traceability_records** - End-to-end produce traceability
+10. **ad_listings** - Voice-to-ad generated listings
+
+#### SQLite - Offline Storage
+**Purpose**: Local device storage for offline functionality
+**Tables**: 10 tables
+**Key Features**:
+- WAL mode for better concurrency
+- File-level encryption (SQLCipher in production)
+- Automatic sync when connectivity restored
+- FIFO sync queue processing
+
+**Tables**:
+1. **cached_listings** - Cached marketplace listings
+2. **pending_sync_queue** - Operations waiting to sync
+3. **local_photo_logs** - Photos stored locally
+4. **user_profile** - Cached user profile
+5. **ai_models_metadata** - Local AI model metadata
+6. **cached_certificates** - Quality certificates cache
+7. **offline_activities** - Activity log
+8. **cached_transactions** - Transaction history cache
+9. **sync_status** - Sync status per entity type
+10. **app_settings** - Application settings
+
+**Sync Strategy**:
+```
+1. User performs action offline
+2. Save to SQLite immediately
+3. Add to pending_sync_queue
+4. When online, process queue (FIFO)
+5. Sync to PostgreSQL/MongoDB
+6. Mark as synced, remove from queue
+7. Handle conflicts (server wins for transactions)
+```
+
+#### Data Consistency Rules
+
+**Transaction States**:
+```
+PENDING → ACCEPTED → PAYMENT_LOCKED → IN_TRANSIT → DELIVERED → COMPLETED
+                                                              ↓
+                                                          DISPUTED
+```
+
+**Escrow Rules**:
+- Funds locked when transaction status = PAYMENT_LOCKED
+- Funds released when status = COMPLETED (quality match >90%)
+- Funds frozen when status = DISPUTED
+
+**Credibility Score**:
+- Range: 300-900
+- Components: transaction_history (35%), payment_reliability (30%), farming_consistency (20%), produce_quality (15%)
+- Updated on transaction completion
+- History tracked with audit trail
+
+**Rating System**:
+- Range: 0-5
+- Implicit rating (70%) + Explicit rating (30%)
+- Both parties can rate after completion
+
+#### Database Documentation
+
+Complete database documentation available in:
+- `DATABASE-DOCUMENTATION.md` - Complete table documentation
+- `DATABASE-ER-DIAGRAMS.md` - Visual relationship diagrams
+- `DATABASE-SUMMARY.md` - Quick reference guide
+- `src/database/README.md` - PostgreSQL specific docs
+- `src/database/MONGODB-README.md` - MongoDB specific docs
+- `src/database/SQLITE-README.md` - SQLite specific docs
+
 ## Process Flow Diagrams
 
 ### 1. Farmer Onboarding and Produce Listing Flow
@@ -733,7 +1009,7 @@ flowchart TD
     ProcessOp --> OpType{Operation Type}
     
     OpType -->|Photo-Log| UploadPhoto[Upload Photo to Cloud]
-    OpType -->|Listing| CreateListing[Create/Update Listing]
+    OpType -->|Listing| CreateListing["Create/Update Listing"]
     OpType -->|Certificate| UploadCert[Upload Certificate]
     
     UploadPhoto --> CheckConflict{Conflict Detected?}
@@ -753,7 +1029,7 @@ flowchart TD
     MarkSuccess --> RemoveQueue[Remove from Queue]
     RemoveQueue --> GetQueue
     
-    SyncComplete --> NotifyUser[Notify User: Sync Complete]
+    SyncComplete --> NotifyUser["Notify User: Sync Complete"]
     NotifyUser --> End([End])
 ```
 
@@ -765,8 +1041,8 @@ flowchart TD
     FreezeEscrow --> NotifyParties[Notify Both Parties]
     NotifyParties --> CollectEvidence[Collect Evidence from Both Parties]
     
-    CollectEvidence --> FarmerEvidence[Farmer Submits: Original Photos, Dispatch Records]
-    CollectEvidence --> BuyerEvidence[Buyer Submits: Delivery Photos, Quality Issues]
+    CollectEvidence --> FarmerEvidence["Farmer Submits: Original Photos, Dispatch Records"]
+    CollectEvidence --> BuyerEvidence["Buyer Submits: Delivery Photos, Quality Issues"]
     
     FarmerEvidence --> EvidenceComplete{All Evidence Collected?}
     BuyerEvidence --> EvidenceComplete
@@ -782,7 +1058,7 @@ flowchart TD
     
     MakeDecision -->|Farmer Fault| RefundBuyer[Refund Buyer]
     MakeDecision -->|Buyer Fault| PayFarmer[Pay Farmer]
-    MakeDecision -->|Partial Fault| PartialRefund[Partial Refund/Payment]
+    MakeDecision -->|Partial Fault| PartialRefund["Partial Refund/Payment"]
     MakeDecision -->|Unclear| Escalate[Escalate to Senior Review]
     
     RefundBuyer --> UpdateScores[Update Credibility Scores]
@@ -793,7 +1069,7 @@ flowchart TD
     SeniorReview --> FinalDecision[Final Decision]
     FinalDecision --> UpdateScores
     
-    UpdateScores --> ReleaseFunds[Release/Refund Funds]
+    UpdateScores --> ReleaseFunds["Release/Refund Funds"]
     ReleaseFunds --> NotifyOutcome[Notify Both Parties of Outcome]
     NotifyOutcome --> DisagreeOption{Party Disagrees?}
     
@@ -960,10 +1236,10 @@ flowchart TD
     
     OptionalVideo -->|Yes| RecordVideo[Record Short Video]
     OptionalVideo -->|No| ProcessImage
-    RecordVideo --> ProcessImage[Process Image/Video]
+    RecordVideo --> ProcessImage["Process Image/Video"]
     
     ProcessImage --> EdgeAI[Run Edge AI Model]
-    EdgeAI --> DetectDisease[Detect Disease/Pest]
+    EdgeAI --> DetectDisease["Detect Disease/Pest"]
     
     DetectDisease --> HighConfidence{Confidence > 85%?}
     
@@ -974,16 +1250,16 @@ flowchart TD
     ShowTopThree --> FarmerSelect[Farmer Selects Match]
     FarmerSelect --> DiseaseInfo
     
-    DiseaseInfo --> ShowSymptoms[Show Symptoms & Causes]
+    DiseaseInfo --> ShowSymptoms["Show Symptoms & Causes"]
     ShowSymptoms --> ShowRemedies[Show Treatment Options]
     
     ShowRemedies --> RemedyType{Treatment Type}
     
-    RemedyType -->|Chemical| ChemicalList[List Pesticides/Fungicides]
+    RemedyType -->|Chemical| ChemicalList["List Pesticides/Fungicides"]
     RemedyType -->|Organic| OrganicList[List Natural Remedies]
     RemedyType -->|Both| ShowBoth[Show Both Options]
     
-    ChemicalList --> DosageInfo[Show Dosage & Safety]
+    ChemicalList --> DosageInfo["Show Dosage & Safety"]
     OrganicList --> PreparationInfo[Show Preparation Steps]
     ShowBoth --> DosageInfo
     ShowBoth --> PreparationInfo
@@ -1021,17 +1297,17 @@ flowchart TD
     GuessIntent --> ProcessQuery
     
     ProcessQuery --> NLU[Natural Language Understanding]
-    NLU --> ExtractIntent[Extract Intent & Entities]
+    NLU --> ExtractIntent["Extract Intent & Entities"]
     
     ExtractIntent --> QueryType{Query Type}
     
     QueryType -->|Crop Selection| CropAdvice[Recommend Crops for Season/Soil]
-    QueryType -->|Planting| PlantingAdvice[Sowing Time, Spacing, Depth]
-    QueryType -->|Irrigation| IrrigationAdvice[Water Schedule & Quantity]
-    QueryType -->|Fertilizer| FertilizerAdvice[NPK Ratios & Timing]
+    QueryType -->|Planting| PlantingAdvice["Sowing Time, Spacing, Depth"]
+    QueryType -->|Irrigation| IrrigationAdvice["Water Schedule & Quantity"]
+    QueryType -->|Fertilizer| FertilizerAdvice["NPK Ratios & Timing"]
     QueryType -->|Pest/Disease| DiseaseDiagnosis[Link to Diagnosis Module]
-    QueryType -->|Harvest| HarvestAdvice[Harvest Timing & Methods]
-    QueryType -->|Market| MarketAdvice[Price Trends & Demand]
+    QueryType -->|Harvest| HarvestAdvice["Harvest Timing & Methods"]
+    QueryType -->|Market| MarketAdvice["Price Trends & Demand"]
     QueryType -->|General| GeneralAdvice[Search Knowledge Base]
     
     CropAdvice --> GenerateResponse[Generate Response]
@@ -1070,8 +1346,8 @@ flowchart TD
     InputMethod -->|Scan Report| CaptureReport[Capture Test Report Photo]
     InputMethod -->|Manual Entry| ManualForm[Open Manual Entry Form]
     
-    CaptureReport --> OCR[OCR Extract Data]
-    OCR --> ValidateData{Data Valid?}
+    CaptureReport --> OCRExtract[OCR Extract Data]
+    OCRExtract --> ValidateData{Data Valid?}
     
     ValidateData -->|No| ManualCorrection[Manual Correction]
     ValidateData -->|Yes| ParseData[Parse Test Parameters]
@@ -1079,8 +1355,8 @@ flowchart TD
     ManualCorrection --> ParseData
     ManualForm --> ParseData
     
-    ParseData --> ExtractParams[Extract: pH, N, P, K, OC, EC, etc.]
-    ExtractParams --> SaveRecord[Save Record with Date & Location]
+    ParseData --> ExtractParams["Extract: pH, N, P, K, OC, EC, etc."]
+    ExtractParams --> SaveRecord["Save Record with Date & Location"]
     
     SaveRecord --> HistoryCheck{Previous Records Exist?}
     
@@ -1088,7 +1364,7 @@ flowchart TD
     HistoryCheck -->|No| FirstRecord[Mark as Baseline]
     
     CompareHistory --> TrendAnalysis[Analyze Trends]
-    TrendAnalysis --> ShowTrends[Visualize Trends (Charts)]
+    TrendAnalysis --> ShowTrends["Visualize Trends (Charts)"]
     
     FirstRecord --> ShowCurrent[Show Current Values]
     ShowTrends --> ShowCurrent
@@ -1108,7 +1384,7 @@ flowchart TD
     
     SuggestCrops --> SetReminder{Set Next Test Reminder?}
     
-    SetReminder -->|Yes| CreateReminder[Create Reminder (6 months)]
+    SetReminder -->|Yes| CreateReminder["Create Reminder (6 months)"]
     SetReminder -->|No| End([End])
     
     CreateReminder --> End
@@ -1259,15 +1535,15 @@ flowchart TD
     LocalAnalysis --> AnalyzeVisual[Analyze Visual Features]
     CloudAnalysis --> AnalyzeVisual
     
-    AnalyzeVisual --> CheckColor[Check Color (Dark Brown/Black)]
-    AnalyzeVisual --> CheckTexture[Check Texture (Crumbly)]
+    AnalyzeVisual --> CheckColor["Check Color (Dark Brown/Black)"]
+    AnalyzeVisual --> CheckTexture["Check Texture (Crumbly)"]
     AnalyzeVisual --> CheckMoisture[Check Moisture Level]
-    AnalyzeVisual --> CheckOdor[Estimate Odor (from visual cues)]
+    AnalyzeVisual --> CheckOdor["Estimate Odor (from visual cues)"]
     
-    CheckColor --> ScoreColor[Color Score: 0-100]
-    CheckTexture --> ScoreTexture[Texture Score: 0-100]
-    CheckMoisture --> ScoreMoisture[Moisture Score: 0-100]
-    CheckOdor --> ScoreOdor[Odor Score: 0-100]
+    CheckColor --> ScoreColor["Color Score: 0-100"]
+    CheckTexture --> ScoreTexture["Texture Score: 0-100"]
+    CheckMoisture --> ScoreMoisture["Moisture Score: 0-100"]
+    CheckOdor --> ScoreOdor["Odor Score: 0-100"]
     
     ScoreColor --> CalculateOverall[Calculate Overall Maturity Score]
     ScoreTexture --> CalculateOverall
@@ -1307,17 +1583,17 @@ flowchart TD
     Start([Farmer Wants to Create Ad]) --> OpenAdCreator[Open Ad Creator]
     OpenAdCreator --> RecordVoice[Record Voice Note]
     
-    RecordVoice --> VoiceContent[Farmer Describes: Item, Quantity, Price, Location]
+    RecordVoice --> VoiceContent["Farmer Describes: Item, Quantity, Price, Location"]
     VoiceContent --> STT[Speech-to-Text Conversion]
     
     STT --> NLU[Natural Language Understanding]
     NLU --> ExtractEntities[Extract Entities]
     
-    ExtractEntities --> ItemType[Item Type: Seeds/Saplings/Tools]
-    ExtractEntities --> Quantity[Quantity: Number & Unit]
-    ExtractEntities --> Price[Price: Amount]
-    ExtractEntities --> Location[Location: Village/District]
-    ExtractEntities --> Condition[Condition: New/Used]
+    ExtractEntities --> ItemType["Item Type: Seeds/Saplings/Tools"]
+    ExtractEntities --> Quantity["Quantity: Number & Unit"]
+    ExtractEntities --> Price["Price: Amount"]
+    ExtractEntities --> Location["Location: Village/District"]
+    ExtractEntities --> Condition["Condition: New/Used"]
     ExtractEntities --> Description[Additional Details]
     
     ItemType --> ValidateData{All Required Data?}
@@ -1344,7 +1620,7 @@ flowchart TD
     EditAd --> ShowPreview
     
     FarmerReview -->|Yes| SelectCategory[Select Category]
-    SelectCategory --> SetVisibility[Set Visibility (Public/Local)]
+    SelectCategory --> SetVisibility["Set Visibility (Public/Local)"]
     
     SetVisibility --> PublishAd[Publish Ad]
     PublishAd --> NotifyNearby[Notify Nearby Farmers]
@@ -1370,8 +1646,8 @@ flowchart TD
     MatchEngine --> CheckCropType[Check Crop Type]
     MatchEngine --> CheckIncome[Check Income Level]
     MatchEngine --> CheckAge[Check Farmer Age]
-    MatchEngine --> CheckGender[Check Gender (Women schemes)]
-    MatchEngine --> CheckCaste[Check Category (SC/ST/OBC)]
+    MatchEngine --> CheckGender["Check Gender (Women schemes)"]
+    MatchEngine --> CheckCaste["Check Category (SC/ST/OBC)"]
     MatchEngine --> CheckBankAccount[Check Bank Account]
     MatchEngine --> CheckPrevSchemes[Check Previous Schemes]
     
@@ -1437,7 +1713,7 @@ flowchart TD
     CheckProximity -->|No| IndividualRoutes[Create Individual Routes]
     CheckProximity -->|Yes| PoolingOpportunity[Pooling Opportunity Detected]
     
-    PoolingOpportunity --> NotifyFarmers[Notify Farmers: Pooling Available]
+    PoolingOpportunity --> NotifyFarmers["Notify Farmers: Pooling Available"]
     NotifyFarmers --> FarmersAgree{All Farmers Agree?}
     
     FarmersAgree -->|No| IndividualRoutes
@@ -1448,7 +1724,7 @@ flowchart TD
     
     ConsiderFactors --> RoadConditions[Road Conditions]
     ConsiderFactors --> TrafficData[Traffic Data]
-    ConsiderFactors --> ProduceType[Produce Type (Perishability)]
+    ConsiderFactors --> ProduceType["Produce Type (Perishability)"]
     ConsiderFactors --> TruckCapacity[Truck Capacity]
     ConsiderFactors --> TimeWindows[Pickup Time Windows]
     
@@ -1547,11 +1823,11 @@ flowchart TD
     SeedBatch --> CreateTraceID[Create Traceability ID]
     
     CreateTraceID --> Sowing[Sowing Activity]
-    Sowing --> PhotoLog1[Photo Log: Sowing]
-    PhotoLog1 --> RecordDate1[Record Date & Location]
+    Sowing --> PhotoLog1["Photo Log: Sowing"]
+    PhotoLog1 --> RecordDate1["Record Date & Location"]
     
     RecordDate1 --> GrowthStage[Growth Monitoring]
-    GrowthStage --> PhotoLog2[Photo Log: Growth Stages]
+    GrowthStage --> PhotoLog2["Photo Log: Growth Stages"]
     PhotoLog2 --> RecordActivities[Record Activities]
     
     RecordActivities --> Irrigation[Irrigation Events]
@@ -1567,7 +1843,7 @@ flowchart TD
     LogInputs --> InputDetails[Product Name, Quantity, Date]
     InputDetails --> Harvest[Harvest Activity]
     
-    Harvest --> PhotoLog3[Photo Log: Harvest]
+    Harvest --> PhotoLog3["Photo Log: Harvest"]
     PhotoLog3 --> RecordYield[Record Yield]
     RecordYield --> QualityGrading[Fasal-Parakh Grading]
     
@@ -2252,13 +2528,13 @@ graph TD
         Organic Carbon: 0.52% ✓ Good<br/>
         EC: 0.35 dS/m ✓ Normal<br/><br/>
         📈 <b>Trends (Last 2 Years)</b><br/>
-        [Line Chart: pH, N, P, K over time]<br/><br/>
+        Line Chart showing pH, N, P, K over time<br/><br/>
         💡 <b>Recommendations</b><br/>
         • Apply Urea 50 kg/acre for N<br/>
         • Add Muriate of Potash 25 kg/acre<br/>
         • Suitable crops: Tomato, Chili, Cotton<br/><br/>
-        [Add New Test] [View History]<br/>
-        [Set Reminder: Next Test in 6 months]
+        Add New Test | View History<br/>
+        Set Reminder for Next Test in 6 months
         </div>"]
     end
 ```
@@ -2464,17 +2740,17 @@ graph TD
     subgraph "Live Vehicle Tracking"
         AE["<div style='text-align:center'>
         ← Back | <b>Track Vehicle</b><br/><br/>
-        [Map View with Vehicle Icon]<br/><br/>
+        Map View with Vehicle Icon<br/><br/>
         🚚 <b>Vehicle: MH-15-AB-1234</b><br/>
         Driver: Ramesh Kumar<br/>
-        📞 [Call Driver]<br/><br/>
+        📞 Call Driver<br/><br/>
         <b>Current Location</b><br/>
         📍 NH-60, near Sinnar<br/>
         Updated: 2 min ago<br/><br/>
         <b>Status</b><br/>
         🟢 On Route • On Time<br/><br/>
         <b>Journey Progress</b><br/>
-        [Progress Bar: 65%]<br/><br/>
+        Progress Bar showing 65%<br/><br/>
         Pickup: ✅ Completed (2:30 PM)<br/>
         Current: 🚚 In Transit<br/>
         Delivery: ⏳ Expected 6:45 PM<br/><br/>
@@ -2482,7 +2758,7 @@ graph TD
         85 km • 1 hour 45 min<br/><br/>
         <b>Route</b><br/>
         Nashik → Sinnar → Kalyan → Mumbai<br/><br/>
-        [Share Location] [Report Issue]
+        Share Location | Report Issue
         </div>"]
     end
 ```
